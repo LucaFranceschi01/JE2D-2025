@@ -17,7 +17,6 @@ Color bgcolor(130, 80, 100);
 
 Player player("data/johnnysilverhand.tga", fb_size*0.5, 100, FACE_DOWN);
 GameMap* gameMap = loadGameMap("data/testing.json", "data/tileset.tga");
-Vector2 camera_position = { 0.0, 0.0 };
 
 Game::Game(int window_width, int window_height, SDL_Window* window)
 {
@@ -53,9 +52,9 @@ void Game::render(void)
 	//add your code here to fill the framebuffer
 	framebuffer.fill( bgcolor );								//fills the image with one color
 
-	gameMap->render(&framebuffer, camera_position);
+	gameMap->render(&framebuffer, player.camera_position);
 
-	player.render(&framebuffer, camera_position);
+	player.render(&framebuffer);
 
 	//some new useful functions
 		//framebuffer.fill( bgcolor );								//fills the image with one color
@@ -74,7 +73,6 @@ void Game::update(double seconds_elapsed)
 {
 	// Move the player (if needed)
 	player.move(seconds_elapsed, time, fb_size, gameMap->map_size);
-	camera_position = player.position - fb_size * 0.5;
 
 	//example of 'was pressed'
 	if (Input::wasKeyPressed(SDL_SCANCODE_A)) //if key A was pressed

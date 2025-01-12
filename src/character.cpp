@@ -15,9 +15,9 @@ Character::Character(const char* spritename, Vector2 position, int movement_spee
 	this->sprite.loadTGA(this->spritename);
 }
 
-void Character::render(Image* fb, Vector2 camera_position)
+void Character::render(Image* fb)
 {
-	fb->drawImage(this->sprite, this->position.x - camera_position.x - CH_WIDTH * 0.5, this->position.y - camera_position.y - CH_HEIGHT + 2, Area(this->frame * CH_WIDTH, this->side * CH_HEIGHT, CH_WIDTH, CH_HEIGHT));
+	fb->drawImage(this->sprite, this->position.x - CH_WIDTH * 0.5, this->position.y - CH_HEIGHT + 2, Area(this->frame * CH_WIDTH, this->side * CH_HEIGHT, CH_WIDTH, CH_HEIGHT));
 }
 
 void Character::move_up()
@@ -44,32 +44,18 @@ void Character::move_right()
 	this->side = FACE_RIGHT;
 }
 
-void Character::update_position(double dt, Vector2 fb_size, Vector2 map_size)
+void Character::update_position(double dt)
 {
 	this->velocity.normalize();
 	this->position += this->velocity * this->movement_speed * dt;
-	cameraClamp(fb_size, map_size);
-}
-
-void Character::cameraClamp(Vector2 fb_size, Vector2 map_size)
-{
-	if (this->position.x < fb_size.x * 0.5) {
-		this->position.x = fb_size.x * 0.5;
-	}
-	if (this->position.y < fb_size.y * 0.5) {
-		this->position.y = fb_size.y * 0.5;
-	}
-	if (this->position.x > map_size.y - fb_size.x * 0.5) {
-		this->position.x = map_size.y - fb_size.x * 0.5;
-	}
-	if (this->position.y > map_size.y - fb_size.y * 0.5) {
-		this->position.y = map_size.y - fb_size.y * 0.5;
-	}
 }
 
 Player::Player(const char* spritename, Vector2 position, int movement_speed, int resting_side) :
-	Character(spritename, position, movement_speed, resting_side)
+	Character(spritename, position, movement_speed, resting_side) {}
+
+void Player::render(Image* fb)
 {
+	fb->drawImage(this->sprite, this->position.x - this->camera_position.x - CH_WIDTH * 0.5, this->position.y - this->camera_position.y - CH_HEIGHT + 2, Area(this->frame * CH_WIDTH, this->side * CH_HEIGHT, CH_WIDTH, CH_HEIGHT));
 }
 
 void Player::move(double dt, double time, Vector2 fb_size, Vector2 map_size)
@@ -103,6 +89,19 @@ void Player::move(double dt, double time, Vector2 fb_size, Vector2 map_size)
 	}
 }
 
+void Player::update_position(double dt, Vector2 fb_size, Vector2 map_size)
+{
+	Character::update_position(dt);
+	cameraClamp(fb_size, map_size);
+}
+
+void Player::cameraClamp(Vector2 fb_size, Vector2 map_size)
+{
+	this->camera_position = this->position - fb_size * 0.5;
+	this->camera_position.x = clamp(this->camera_position.x, 0.0f, map_size.x - fb_size.x);
+	this->camera_position.y = clamp(this->camera_position.y, 0.0f, map_size.y - fb_size.y);
+}
+
 NPC::NPC(const char* spritename, Vector2 position, int movement_speed, int resting_side) :
 	Character(spritename, position, movement_speed, resting_side)
 {
@@ -116,10 +115,10 @@ void NPC::move(double dt, double time, Vector2 fb_size, Vector2 map_size)
 	this->side = this->resting_side;
 	this->frame = RESTING_FRAME;
 
-	// TODO: NPC MOVEMENTS 
+	// TODO: NPC MOVEMENTS
 
 	if (this->velocity.length() > 0.0) {
-		update_position(dt, fb_size, map_size);
+		update_position(dt);
 		this->frame = int(time * ANIMATION_SPEED) % FRAMES;
 	}
 }
