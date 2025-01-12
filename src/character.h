@@ -35,12 +35,14 @@ public:
 
 	Character(const char* spritename, Vector2 position, int movement_speed, int resting_side);
 
-	void render(Image* fb);
+	void render(Image* fb, Vector2 camera_position);
 	void move_up();
 	void move_down();
 	void move_left();
 	void move_right();
-	void update_position(double dt);
+	void update_position(double dt, Vector2 fb_size, Vector2 map_size);
+
+	void cameraClamp(Vector2 fb_size, Vector2 map_size);
 	
 	// TODO: ASK, ya que ambos Player y NPC van a tener move tengo que poner la signature de move aquí?
 	// virtual void move(double dt, double time);
@@ -52,7 +54,7 @@ public:
 
 	Player(const char* spritename, Vector2 position, int movement_speed, int resting_side);
 	
-	void move(double dt, double time);
+	void move(double dt, double time, Vector2 fb_size, Vector2 map_size);
 };
 
 class NPC : public Character 
@@ -60,7 +62,7 @@ class NPC : public Character
 public:
 	NPC(const char* spritename, Vector2 position, int movement_speed, int resting_side);
 
-	void move(double dt, double time);
+	void move(double dt, double time, Vector2 fb_size, Vector2 map_size);
 };
 
 #endif
