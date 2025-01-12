@@ -35,3 +35,10 @@ tiled/
 
 # Visual temporary files
 **/.vs/
+
+# Other
+*.pdb
+*.idb
+*.log
+*.tlog
+*.recipe
