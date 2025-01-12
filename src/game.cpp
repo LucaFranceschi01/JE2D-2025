@@ -2,6 +2,7 @@
 #include "utils.h"
 #include "input.h"
 #include "image.h"
+#include "character.h"
 
 #include <cmath>
 
@@ -9,8 +10,9 @@ Game* Game::instance = NULL;
 
 Image font;
 Image minifont;
-Image sprite;
 Color bgcolor(130, 80, 100);
+
+Player player("data/johnnysilverhand.tga", { 0.0, 0.0 }, 100, FACE_DOWN);
 
 Game::Game(int window_width, int window_height, SDL_Window* window)
 {
@@ -28,10 +30,12 @@ Game::Game(int window_width, int window_height, SDL_Window* window)
 
 	font.loadTGA("data/bitmap-font-white.tga"); //load bitmap-font image
 	minifont.loadTGA("data/mini-font-white-4x6.tga"); //load bitmap-font image
-	sprite.loadTGA("data/spritesheet.tga"); //example to load an sprite
+	//sprite.loadTGA("data/spritesheet.tga"); //example to load an sprite
 
+	// TODO: modificado en clase
 	//enableAudio(); //enable this line if you plan to add audio to your application
-	//synth.playSample("data/coin.wav",1,true);
+	//auto sample = synth.playSample("data/coin.wav",1,true);
+	// sample-> ...
 	//synth.osc1.amplitude = 0.5;
 }
 
@@ -42,15 +46,18 @@ void Game::render(void)
 	Image framebuffer(160, 120); //do not change framebuffer size
 
 	//add your code here to fill the framebuffer
-	//...
+	framebuffer.fill( bgcolor );								//fills the image with one color
+
+	player.render(&framebuffer);
+
 
 	//some new useful functions
-		framebuffer.fill( bgcolor );								//fills the image with one color
+		//framebuffer.fill( bgcolor );								//fills the image with one color
 		//framebuffer.drawLine( 0, 0, 100,100, Color::RED );		//draws a line
 		//framebuffer.drawImage( sprite, 0, 0 );					//draws full image
-		framebuffer.drawImage( sprite, 0, 0, framebuffer.width, framebuffer.height );			//draws a scaled image
+		// framebuffer.drawImage( sprite, 0, 0, framebuffer.width, framebuffer.height );			//draws a scaled image
 		//framebuffer.drawImage( sprite, 0, 0, Area(0,0,14,18) );	//draws only a part of an image
-		framebuffer.drawText( "Hello World", 0, 0, font );				//draws some text using a bitmap font in an image (assuming every char is 7x9)
+		//framebuffer.drawText( "Hello World", 0, 0, font );				//draws some text using a bitmap font in an image (assuming every char is 7x9)
 		//framebuffer.drawText( toString(time), 1, 10, minifont,4,6);	//draws some text using a bitmap font in an image (assuming every char is 4x6)
 
 	//send image to screen
@@ -59,16 +66,8 @@ void Game::render(void)
 
 void Game::update(double seconds_elapsed)
 {
-	//Add here your update method
-	//...
-
-	//Read the keyboard state, to see all the keycodes: https://wiki.libsdl.org/SDL_Keycode
-	if (Input::isKeyPressed(SDL_SCANCODE_UP)) //if key up
-	{
-	}
-	if (Input::isKeyPressed(SDL_SCANCODE_DOWN)) //if key down
-	{
-	}
+	// Move the player (if needed)
+	player.move(seconds_elapsed, time);
 
 	//example of 'was pressed'
 	if (Input::wasKeyPressed(SDL_SCANCODE_A)) //if key A was pressed
