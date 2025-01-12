@@ -32,3 +32,6 @@
 
 # Tiled project
 tiled/
+
+# Visual temporary files
+**/.vs/
