@@ -62,6 +62,8 @@ public:
 	void update_position(double dt, Vector2 fb_size, Vector2 map_size);
 
 	void cameraClamp(Vector2 fb_size, Vector2 map_size);
+
+	void positionClamp(Vector2 fb_size, Vector2 map_size);
 };
 
 class NPC : public Character 

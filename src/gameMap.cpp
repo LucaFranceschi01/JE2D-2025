@@ -8,7 +8,7 @@ GameMap::GameMap(const char* filename) {
     this->numLayers = 0;
 	this->tile_width = 0;
 	this->tile_height = 0;
-    this->map_size = { 0.0, 0.0 };
+    this->map_size = { 0.0, 0.0 }; // resolution "on the framebuffer"
     this->tileset.loadTGA(filename);
 }
 

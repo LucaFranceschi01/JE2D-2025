@@ -1,5 +1,5 @@
 /*
-
+	The code from the slides but a bit refactored
 */
 
 #ifndef GAMEMAP_H

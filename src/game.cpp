@@ -15,8 +15,8 @@ Image font;
 Image minifont;
 Color bgcolor(130, 80, 100);
 
-Player player("data/johnnysilverhand.tga", fb_size*0.5, 100, FACE_DOWN);
 GameMap* gameMap = loadGameMap("data/testing.json", "data/tileset.tga");
+Player player("data/johnnysilverhand.tga", fb_size*0.5, 100, FACE_DOWN);
 
 Game::Game(int window_width, int window_height, SDL_Window* window)
 {
