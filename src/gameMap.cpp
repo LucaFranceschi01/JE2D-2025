@@ -34,7 +34,7 @@ void GameMap::render(Image* fb, Vector2 camera_pos)
     int num_tiles_y = this->tileset.height / this->tile_height;
 
 
-    for (int layer_id = 0; layer_id < this->numLayers; layer_id++)
+    for (int layer_id = 0; layer_id < this->numLayers; layer_id++) // TODO: QUITAR ESTE FOR, HAY CAPAS QUE PUEDEN IR POR ENCIMA DEL JUGADOR
     {
         // For every cell
         for (int x = 0; x < this->width; ++x)
@@ -49,7 +49,7 @@ void GameMap::render(Image* fb, Vector2 camera_pos)
 
                 // Compute tile pos in tileset image
                 int tilex = (type % num_tiles_x) * this->tile_width;
-                int tiley = floor(type / num_tiles_y) * this->tile_height;
+                int tiley = floor(type / num_tiles_x) * this->tile_height; // Fixed divisor
 
                 // Create tile area
                 Area area(tilex, tiley, this->tile_width, this->tile_height);
@@ -65,6 +65,13 @@ void GameMap::render(Image* fb, Vector2 camera_pos)
 
                 // Draw region of tileset inside framebuffer
                 fb->drawImage(this->tileset, screenx, screeny, area);
+
+                if (type == 155) {
+                    break;
+                }
+                if (type == 156) {
+                    break;
+                }
             }
         }
     }

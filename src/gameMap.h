@@ -14,11 +14,11 @@
 // than 16x16, since you will have more than
 // 256 different tiles
 
-enum eCellType : uint16_t {
+enum eCellType : uint64_t {
 	EMPTY, START, WALL, DOOR, CHEST
 };
 
-enum eItemType : uint16_t {
+enum eItemType : uint64_t {
 	NOTHING, SWORD, POTION
 };
 
@@ -55,6 +55,6 @@ public:
 	void render(Image* fb, Vector2 camera_pos);
 };
 
-GameMap* loadGameMap(const char* filename, const char* tileset_filename);
+GameMap* loadGameMap(const char* filename, const char* tileset_filename); // TODO: PONER DENTRO DE LA CLASE
 
 #endif

@@ -15,7 +15,7 @@ Image font;
 Image minifont;
 Color bgcolor(130, 80, 100);
 
-GameMap* gameMap = loadGameMap("data/testing.json", "data/tileset.tga");
+GameMap* gameMap = loadGameMap("data/map.json", "data/tileset.tga");
 Player player("data/johnnysilverhand.tga", fb_size*0.5, 100, FACE_DOWN);
 
 Game::Game(int window_width, int window_height, SDL_Window* window)
@@ -126,6 +126,9 @@ void Game::onMouseButtonDown( SDL_MouseButtonEvent event )
 
 void Game::onMouseButtonUp(SDL_MouseButtonEvent event)
 {
+	/*if (current_stage) {
+		current_stage.onmouse...
+	}*/
 }
 
 void Game::onMouseWheel(SDL_MouseWheelEvent event)

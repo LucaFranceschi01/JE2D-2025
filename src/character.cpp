@@ -83,6 +83,7 @@ void Player::move(double dt, double time, Vector2 fb_size, Vector2 map_size)
 	}
 	// TODO: ASK hay direcciones que tienen prioridad (no es la ultima direccion cuando hay 2 pulsadas a la vez)
 
+	// TODO: CHECK NEXT POSITION PARA COLISIONES
 	if (this->velocity.length() > 0.0) {
 		update_position(dt, fb_size, map_size);
 		this->frame = int(time * ANIMATION_SPEED) % FRAMES;

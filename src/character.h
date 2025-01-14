@@ -2,8 +2,7 @@
 	This class encapsulates a character and all the things related to rendering one (e.g.: main character or NPC)
 */
 
-#ifndef CHARACTER_H
-#define CHARACTER_H
+#pragma once
 
 #include "math.h"
 #include "image.h"
@@ -73,5 +72,3 @@ public:
 
 	void move(double dt, double time, Vector2 fb_size, Vector2 map_size);
 };
-
-#endif
