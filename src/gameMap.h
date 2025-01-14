@@ -15,11 +15,11 @@
 // 256 different tiles
 
 enum eCellType : uint64_t {
-	EMPTY, START, WALL, DOOR, CHEST
+	//EMPTY, START, WALL, DOOR, CHEST
 };
 
 enum eItemType : uint64_t {
-	NOTHING, SWORD, POTION
+	//NOTHING, SWORD, POTION
 };
 
 struct sCell {
@@ -52,7 +52,7 @@ public:
 
     sCell& getCell(int x, int y, int l);
 
-	void render(Image* fb, Vector2 camera_pos);
+	void render(Image* fb, Vector2 camera_pos, int layer_id);
 };
 
 GameMap* loadGameMap(const char* filename, const char* tileset_filename); // TODO: PONER DENTRO DE LA CLASE

@@ -16,7 +16,11 @@ Image minifont;
 Color bgcolor(130, 80, 100);
 
 GameMap* gameMap = loadGameMap("data/map.json", "data/tileset.tga");
-Player player("data/johnnysilverhand.tga", fb_size*0.5, 100, FACE_DOWN);
+Player player("data/johnnysilverhand.tga", Vector2{ gameMap->map_size.x*0.4f, gameMap->map_size.y*0.95f }, 100, FACE_DOWN);
+
+enum {
+	FLOOR, OBJECTS, FURNITURE, PROPS, WALL, WALL_TOP, COLLISIONS
+} layers; // TODO: name?
 
 Game::Game(int window_width, int window_height, SDL_Window* window)
 {
@@ -41,6 +45,7 @@ Game::Game(int window_width, int window_height, SDL_Window* window)
 	//auto sample = synth.playSample("data/coin.wav",1,true);
 	// sample-> ...
 	//synth.osc1.amplitude = 0.5;
+	player.cameraClamp(fb_size, gameMap->map_size);
 }
 
 //what to do when the image has to be draw
@@ -52,9 +57,16 @@ void Game::render(void)
 	//add your code here to fill the framebuffer
 	framebuffer.fill( bgcolor );								//fills the image with one color
 
-	gameMap->render(&framebuffer, player.camera_position);
+	gameMap->render(&framebuffer, player.camera_position, FLOOR);
+	gameMap->render(&framebuffer, player.camera_position, OBJECTS);
+	gameMap->render(&framebuffer, player.camera_position, FURNITURE);
+	gameMap->render(&framebuffer, player.camera_position, PROPS);
 
 	player.render(&framebuffer);
+
+	gameMap->render(&framebuffer, player.camera_position, WALL);
+	gameMap->render(&framebuffer, player.camera_position, WALL_TOP);
+
 
 	//some new useful functions
 		//framebuffer.fill( bgcolor );								//fills the image with one color
@@ -73,6 +85,24 @@ void Game::update(double seconds_elapsed)
 {
 	// Move the player (if needed)
 	player.move(seconds_elapsed, time, fb_size, gameMap->map_size);
+
+	//Vector2 target = player.position;
+
+	//if (isPressed(LEFT))
+	//	target.x -= 1;
+	//if (isPressed(RIGHT))
+	//	target.x += 1;
+
+	//if (isValid(target))
+	//	player.pos = target;
+
+	//// Walking diagonally
+
+	//else if (isValid(Vector2(target.x, player.pos.y)))
+	//	player.pos = Vector2(target.x, player.pos.y);
+
+	//else if (isValid(Vector2(player.pos.x, target.y)))
+	//	player.pos = Vector2(player.pos.x, target.y);
 
 	//example of 'was pressed'
 	if (Input::wasKeyPressed(SDL_SCANCODE_A)) //if key A was pressed

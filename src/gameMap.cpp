@@ -28,51 +28,40 @@ sCell& GameMap::getCell(int x, int y, int l)
 	return this->layers[l].data[x + y * width];
 }
 
-void GameMap::render(Image* fb, Vector2 camera_pos)
+void GameMap::render(Image* fb, Vector2 camera_pos, int layer_id)
 {
     int num_tiles_x = this->tileset.width / this->tile_width;
     int num_tiles_y = this->tileset.height / this->tile_height;
 
-
-    for (int layer_id = 0; layer_id < this->numLayers; layer_id++) // TODO: QUITAR ESTE FOR, HAY CAPAS QUE PUEDEN IR POR ENCIMA DEL JUGADOR
+    // For every cell
+    for (int x = 0; x < this->width; ++x)
     {
-        // For every cell
-        for (int x = 0; x < this->width; ++x)
+        for (int y = 0; y < this->height; ++y)
         {
-            for (int y = 0; y < this->height; ++y)
-            {
-                // Get cell info
-                sCell& cell = getCell(x, y, layer_id);
-                if (cell.type == -1)
-                    continue;
-                int type = (int)cell.type;
+            // Get cell info
+            sCell& cell = getCell(x, y, layer_id);
+            if (cell.type == -1)
+                continue;
+            int type = (int)cell.type;
 
-                // Compute tile pos in tileset image
-                int tilex = (type % num_tiles_x) * this->tile_width;
-                int tiley = floor(type / num_tiles_x) * this->tile_height; // Fixed divisor
+            // Compute tile pos in tileset image
+            int tilex = (type % num_tiles_x) * this->tile_width;
+            int tiley = floor(type / num_tiles_x) * this->tile_height; // Fixed divisor
 
-                // Create tile area
-                Area area(tilex, tiley, this->tile_width, this->tile_height);
+            // Create tile area
+            Area area(tilex, tiley, this->tile_width, this->tile_height);
 
-                // Screen position with camera offset
-                int screenx = x * this->tile_width - camera_pos.x;
-                int screeny = y * this->tile_height - camera_pos.y;
+            // Screen position with camera offset
+            int screenx = x * this->tile_width - camera_pos.x;
+            int screeny = y * this->tile_height - camera_pos.y;
 
-                // Avoid rendering out of screen stuff
-                if (screenx < -this->tile_width || screenx >(int)fb->width ||
-                    screeny < -this->tile_height || screeny >(int)fb->height)
-                    continue;
+            // Avoid rendering out of screen stuff
+            if (screenx < -this->tile_width || screenx >(int)fb->width ||
+                screeny < -this->tile_height || screeny >(int)fb->height)
+                continue;
 
-                // Draw region of tileset inside framebuffer
-                fb->drawImage(this->tileset, screenx, screeny, area);
-
-                if (type == 155) {
-                    break;
-                }
-                if (type == 156) {
-                    break;
-                }
-            }
+            // Draw region of tileset inside framebuffer
+            fb->drawImage(this->tileset, screenx, screeny, area);
         }
     }
 }

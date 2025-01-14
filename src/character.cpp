@@ -93,7 +93,7 @@ void Player::move(double dt, double time, Vector2 fb_size, Vector2 map_size)
 void Player::update_position(double dt, Vector2 fb_size, Vector2 map_size)
 {
 	Character::update_position(dt);
-	positionClamp(fb_size, map_size);
+	//positionClamp(fb_size, map_size);
 	cameraClamp(fb_size, map_size);
 }
 
