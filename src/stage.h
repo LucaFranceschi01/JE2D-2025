@@ -23,19 +23,44 @@
 
 // hasta collisions
 
+#include "character.h"
+#include "gameMap.h"
+#include "math.h"
+
 class Image;
 
 class Stage
 {
 public:
+	double time;
+	Stage* current_stage;
+	
+	Stage();
 	virtual void init() {}; // así lo haces cuando te de la gana
 	virtual void render(Image* fb) {};
+	virtual void update(double dt) {};
+
+	virtual void camera_clamp(Vector2 fb_size) {};
+	virtual bool is_valid(Vector2 target) { return true; };
+
+	// onMouse....
+	// onEnter, onLeave
 
 	// ...
 };
 
-class PlayStage : public Stage 
+class IntroStage : public Stage 
 {
 public:
+	GameMap gameMap;				// TODO: ESTO VA EN EL PLAYSTAGE NO AQUI
+	Vector2 camera_position;				// TODO: ESTO VA EN EL PLAYSTAGE NO AQUI
+	Player player;				// TODO: ESTO VA EN EL PLAYSTAGE NO AQUI
+
+	IntroStage();
 	void render(Image* fb) override;
+	void update(double dt) override;
+
+	void camera_clamp(Vector2 fb_size) override;
+	bool is_valid(Vector2 target, Vector2 offset);
+
 };

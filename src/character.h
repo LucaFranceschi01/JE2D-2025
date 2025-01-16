@@ -11,7 +11,7 @@ constexpr auto CH_WIDTH = 32;
 constexpr auto CH_HEIGHT = 32;
 constexpr auto FRAMES = 3;
 constexpr auto RESTING_FRAME = 1;
-constexpr auto ANIMATION_SPEED = 10;
+constexpr auto ANIMATION_SPEED = 0.2;
 
 enum {
 	FACE_DOWN,
@@ -31,6 +31,8 @@ public:
 	const char* spritename;
 	Image sprite;
 	int resting_side;
+
+	Character();
 
 	Character(const char* spritename, Vector2 position, int movement_speed, int resting_side);
 
@@ -52,17 +54,15 @@ class Player : public Character
 public:
 	Vector2 camera_position;
 
+	Player() {};
+
 	Player(const char* spritename, Vector2 position, int movement_speed, int resting_side);
 
-	void render(Image* fb);
+	void render(Image* fb, Vector2 camera_position);
 	
-	void move(double dt, double time, Vector2 fb_size, Vector2 map_size);
+	void move(double dt, double time);
 	
-	void update_position(double dt, Vector2 fb_size, Vector2 map_size);
-
-	void cameraClamp(Vector2 fb_size, Vector2 map_size);
-
-	void positionClamp(Vector2 fb_size, Vector2 map_size);
+	void update_position(double dt);
 };
 
 class NPC : public Character 
@@ -70,5 +70,5 @@ class NPC : public Character
 public:
 	NPC(const char* spritename, Vector2 position, int movement_speed, int resting_side);
 
-	void move(double dt, double time, Vector2 fb_size, Vector2 map_size);
+	//void move(double dt, double time, Vector2 fb_size, Vector2 map_size);
 };

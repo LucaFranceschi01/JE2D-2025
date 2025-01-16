@@ -2,8 +2,7 @@
 	The code from the slides but a bit refactored
 */
 
-#ifndef GAMEMAP_H
-#define GAMEMAP_H
+#pragma once
 
 #include "json.hpp"
 #include "image.h"
@@ -15,11 +14,11 @@
 // 256 different tiles
 
 enum eCellType : uint64_t {
-	//EMPTY, START, WALL, DOOR, CHEST
+	EMPTY, START, WALL=517, DOOR, CHEST
 };
 
 enum eItemType : uint64_t {
-	//NOTHING, SWORD, POTION
+	NOTHING, SWORD, POTION
 };
 
 struct sCell {
@@ -40,21 +39,21 @@ public:
     int tile_width;
     int tile_height;
 	int numLayers;
-	Vector2 map_size;
+	Vector2 size;
 
 	Image tileset;
 
     sLayer* layers;
 
-    GameMap(const char* filename);
+	GameMap() {}; // TODO: ASK: REMOVE AND SEE ERROR
 
-    GameMap(const char* filename, int w, int h);
+	GameMap(const char* tileset_filename);
 
     sCell& getCell(int x, int y, int l);
 
 	void render(Image* fb, Vector2 camera_pos, int layer_id);
+	
+	bool loadGameMap(const char* filename); // TODO: PONER DENTRO DE LA CLASE
+
+	// TODO: poner getStartPosition
 };
-
-GameMap* loadGameMap(const char* filename, const char* tileset_filename); // TODO: PONER DENTRO DE LA CLASE
-
-#endif

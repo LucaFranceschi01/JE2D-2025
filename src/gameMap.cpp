@@ -1,26 +1,15 @@
 #include "gameMap.h"
 #include "image.h"
 
-GameMap::GameMap(const char* filename) {
+GameMap::GameMap(const char* tileset_filename) {
 	this->layers = nullptr;
 	this->width = 0;
 	this->height = 0;
     this->numLayers = 0;
 	this->tile_width = 0;
 	this->tile_height = 0;
-    this->map_size = { 0.0, 0.0 }; // resolution "on the framebuffer"
-    this->tileset.loadTGA(filename);
-}
-
-GameMap::GameMap(const char* filename, int w, int h) {
-	this->layers = nullptr;
-	this->width = w;
-	this->height = h;
-    this->numLayers = 0;
-    this->tile_width = 0;
-    this->tile_height = 0;
-    this->map_size = { 0.0, 0.0 };
-    this->tileset.loadTGA(filename);
+    this->size = Vector2( 0.0, 0.0 ); // resolution "on the framebuffer"
+    this->tileset.loadTGA(tileset_filename);
 }
 
 sCell& GameMap::getCell(int x, int y, int l)
@@ -66,40 +55,42 @@ void GameMap::render(Image* fb, Vector2 camera_pos, int layer_id)
     }
 }
 
-GameMap* loadGameMap(const char* filename, const char* tileset_filename)
+bool GameMap::loadGameMap(const char* filename)
 {
     using json = nlohmann::json;
     std::ifstream f(filename);
     if (!f.good())
-        return nullptr;
+        return false;
     json jData = json::parse(f);
 
     int w = jData["width"];
     int h = jData["height"];
     int numLayers = jData["layers"].size();
 
-    GameMap* map = new GameMap(tileset_filename, w, h);
+    //GameMap* map = new GameMap(tileset_filename, w, h);
     // Allocate memory each layer
-    map->layers = new sLayer[numLayers];
-    map->numLayers = numLayers;
-    map->tile_width = jData["tilewidth"];
-    map->tile_height = jData["tileheight"];
+    this->width = w;
+    this->height = h;
+    this->layers = new sLayer[numLayers];
+    this->numLayers = numLayers;
+    this->tile_width = jData["tilewidth"];
+    this->tile_height = jData["tileheight"];
 
     for (int l = 0; l < numLayers; l++) {
         // Allocate memory for data inside each layer
-        map->layers[l].data = new sCell[w * h];
+        this->layers[l].data = new sCell[w * h];
         json layer = jData["layers"][l];
-        for (int x = 0; x < map->width; x++) {
-            for (int y = 0; y < map->height; y++) {
-                int index = x + y * map->width;
+        for (int x = 0; x < this->width; x++) {
+            for (int y = 0; y < this->height; y++) {
+                int index = x + y * this->width;
                 int type = layer["data"][index].get<int>();
-                map->getCell(x, y, l).type = eCellType(type - 1);
+                this->getCell(x, y, l).type = eCellType(type - 1);
             }
         }
     }
 
-    map->map_size.x = map->tile_width * map->width;
-    map->map_size.y = map->tile_height * map->height;
+    this->size.x = this->tile_width * this->width;
+    this->size.y = this->tile_height * this->height;
 
-    return map;
+    return true;
 }
