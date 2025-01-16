@@ -39,6 +39,8 @@ public:
 	void update( double dt );
 
 	void showFramebuffer(Image* img);
+	
+	void changeStage(int newStage);
 
 	//events
 	void onKeyDown( SDL_KeyboardEvent event );
@@ -50,6 +52,7 @@ public:
 	void onGamepadButtonDown(SDL_JoyButtonEvent event);
 	void onGamepadButtonUp(SDL_JoyButtonEvent event);
 	void onResize(int width, int height);
+
 
 	//audio stuff
 	void enableAudio(); //opens audio channel to play sound

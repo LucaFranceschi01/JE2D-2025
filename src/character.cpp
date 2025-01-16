@@ -40,8 +40,8 @@ void Player::render(Image* fb, Vector2 camera_position)
 	//fb->drawImage(this->sprite, this->position.x - CH_WIDTH * 0.5, this->position.y - CH_HEIGHT + 2, Area(this->frame * CH_WIDTH, this->side * CH_HEIGHT, CH_WIDTH, CH_HEIGHT));
 	//fb->drawImage(this->sprite, this->position.x - camera_position.x - CH_WIDTH * 0.5, this->position.y - camera_position.y - CH_HEIGHT + 2, Area(this->frame * CH_WIDTH, this->side * CH_HEIGHT, CH_WIDTH, CH_HEIGHT));
 	fb->drawImage(this->sprite, this->position.x - camera_position.x - CH_WIDTH * 0.5, this->position.y - camera_position.y - CH_HEIGHT + 2, Area(this->frame * CH_WIDTH, this->side * CH_HEIGHT, CH_WIDTH, CH_HEIGHT));
-	Color red(255, 0, 0); // TODO: remove debug code
-	fb->drawRectangle(this->position.x - camera_position.x, this->position.y - camera_position.y, 1, 1, red);
+	//Color red(255, 0, 0); // TODO: remove debug code
+	//fb->drawRectangle(this->position.x - camera_position.x, this->position.y - camera_position.y, 1, 1, red);
 }
 
 void Player::move(double dt, double time)

@@ -26,6 +26,7 @@
 #include "character.h"
 #include "gameMap.h"
 #include "math.h"
+#include "input.h"
 
 class Image;
 
@@ -42,24 +43,33 @@ public:
 
 	virtual void camera_clamp(Vector2 fb_size) {};
 	virtual bool is_valid(Vector2 target) { return true; };
+	virtual void handle_player_movement(double dt) {};
 
-	// onMouse....
-	// onEnter, onLeave
+	virtual void onEnter() {};
+	virtual void onLeave() {};
 
-	// ...
+	virtual void onKeyDown(SDL_KeyboardEvent event) {};
+	virtual void onKeyUp(SDL_KeyboardEvent event) {};
 };
 
-class IntroStage : public Stage 
+class PlayStage : public Stage 
 {
 public:
 	GameMap gameMap;
 	Vector2 camera_position;
 	Player player;
 
-	IntroStage();
+	PlayStage();
 	void render(Image* fb) override;
 	void update(double dt) override;
 
 	void camera_clamp(Vector2 fb_size) override;
 	bool is_valid(Vector2 target, Vector2 offset);
+	void handle_player_movement(double dt) override;
+
+	void onEnter() override;
+	void onLeave() override;
+
+	void onKeyDown(SDL_KeyboardEvent event) override;
+	void onKeyUp(SDL_KeyboardEvent event) override;
 };

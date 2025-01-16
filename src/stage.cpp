@@ -6,7 +6,7 @@
 
 enum {
 	FLOOR, OBJECTS, FURNITURE, PROPS, WALL_FACE, WALL_TOP, COLLISIONS
-} layers; // TODO: name?
+};
 
 Stage::Stage()
 {
@@ -14,7 +14,7 @@ Stage::Stage()
 	this->time = 0;
 }
 
-IntroStage::IntroStage()
+PlayStage::PlayStage()
 {
 	this->gameMap = GameMap("data/tileset.tga");
 	bool good = this->gameMap.loadGameMap("data/map.json");
@@ -23,7 +23,7 @@ IntroStage::IntroStage()
 	this->player = Player("data/johnnysilverhand.tga", player_initial_position, 100);
 }
 
-void IntroStage::render(Image* fb)
+void PlayStage::render(Image* fb)
 {
 	current_stage->camera_clamp(Vector2(fb->width, fb->height));
 
@@ -42,10 +42,16 @@ void IntroStage::render(Image* fb)
 	}
 
 	gameMap.render(fb, this->camera_position, WALL_TOP);
-	//gameMap.render(fb, this->camera_position, COLLISIONS);
 }
 
-void IntroStage::update(double dt)
+void PlayStage::update(double dt)
+{
+	handle_player_movement(dt);
+	
+	this->time++;
+}
+
+void PlayStage::handle_player_movement(double dt)
 {
 	Vector2 offset = { 0.0, 0.0 };
 	Vector2 velocity = { 0.0, 0.0 };
@@ -92,18 +98,33 @@ void IntroStage::update(double dt)
 	}
 
 	player.move(dt, this->time);
-
-	this->time++;
 }
 
-void IntroStage::camera_clamp(Vector2 fb_size)
+void PlayStage::onEnter()
+{
+}
+
+void PlayStage::onLeave()
+{
+}
+
+void PlayStage::onKeyDown(SDL_KeyboardEvent event)
+{
+}
+
+void PlayStage::onKeyUp(SDL_KeyboardEvent event)
+{
+}
+
+
+void PlayStage::camera_clamp(Vector2 fb_size)
 {
 	this->camera_position = this->player.position - fb_size * 0.5; // also update camera position
 	this->camera_position.x = clamp(this->camera_position.x, 0.0f, this->gameMap.size.x - fb_size.x);
 	this->camera_position.y = clamp(this->camera_position.y, 0.0f, this->gameMap.size.y - fb_size.y);
 }
 
-bool IntroStage::is_valid(Vector2 target, Vector2 offset)
+bool PlayStage::is_valid(Vector2 target, Vector2 offset)
 {
 	int cx = floor((target.x - offset.x) / this->gameMap.tile_width);
 	int cy = floor((target.y - offset.y) / this->gameMap.tile_height);

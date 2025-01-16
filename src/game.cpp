@@ -9,7 +9,8 @@
 #include <cmath>
 
 Game* Game::instance = NULL;
-Stage* stage = nullptr;
+Stage* current_stage = nullptr;
+std::map<int, Stage*> stages;
 
 Image font;
 Image minifont;
@@ -43,9 +44,10 @@ Game::Game(int window_width, int window_height, SDL_Window* window)
 	// sample-> ...
 	//synth.osc1.amplitude = 0.5;
 
-	//std::map<int, Stage*> stages;
+	stages[0] = new PlayStage();
+	stages[1] = new PlayStage();
 
-	stage = new IntroStage();
+	current_stage = stages[0];
 	//player.cameraClamp(fb_size, gameMap->map_size);
 }
 
@@ -58,7 +60,7 @@ void Game::render(void)
 	//add your code here to fill the framebuffer
 	framebuffer.fill( bgcolor );								//fills the image with one color
 
-	stage->current_stage->render(&framebuffer);
+	current_stage->render(&framebuffer);
 
 	//some new useful functions
 		//framebuffer.fill( bgcolor );								//fills the image with one color
@@ -76,7 +78,7 @@ void Game::render(void)
 void Game::update(double seconds_elapsed)
 {
 	// Move the player (if needed)
-	stage->current_stage->update(seconds_elapsed);
+	current_stage->update(seconds_elapsed);
 
 	//example of 'was pressed'
 	if (Input::wasKeyPressed(SDL_SCANCODE_A)) //if key A was pressed
@@ -97,17 +99,28 @@ void Game::update(double seconds_elapsed)
 	}
 }
 
+void Game::changeStage(int newStage)
+{
+	current_stage->onLeave();
+	current_stage = stages[newStage];
+	current_stage->onEnter();
+}
+
 //Keyboard event handler (sync input)
 void Game::onKeyDown( SDL_KeyboardEvent event )
 {
 	switch(event.keysym.sym)
 	{
 		case SDLK_ESCAPE: must_exit = true; break; //ESC key, kill the app
+		case SDLK_1: changeStage(0); break;
+		case SDLK_2: changeStage(1); break;
 	}
+	current_stage->onKeyDown(event);
 }
 
 void Game::onKeyUp(SDL_KeyboardEvent event)
 {
+	current_stage->onKeyUp(event);
 }
 
 void Game::onGamepadButtonDown(SDL_JoyButtonEvent event)
