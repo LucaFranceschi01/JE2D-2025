@@ -52,9 +52,9 @@ public:
 class IntroStage : public Stage 
 {
 public:
-	GameMap gameMap;				// TODO: ESTO VA EN EL PLAYSTAGE NO AQUI
-	Vector2 camera_position;				// TODO: ESTO VA EN EL PLAYSTAGE NO AQUI
-	Player player;				// TODO: ESTO VA EN EL PLAYSTAGE NO AQUI
+	GameMap gameMap;
+	Vector2 camera_position;
+	Player player;
 
 	IntroStage();
 	void render(Image* fb) override;
@@ -62,5 +62,4 @@ public:
 
 	void camera_clamp(Vector2 fb_size) override;
 	bool is_valid(Vector2 target, Vector2 offset);
-
 };

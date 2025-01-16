@@ -20,7 +20,7 @@ enum {
 	FACE_UP
 };
 
-class Character
+class Player
 {
 public:
 	int side;
@@ -30,45 +30,15 @@ public:
 	int movement_speed;
 	const char* spritename;
 	Image sprite;
-	int resting_side;
 
-	Character();
+	Player();
 
-	Character(const char* spritename, Vector2 position, int movement_speed, int resting_side);
+	Player(const char* spritename, Vector2 position, int movement_speed);
 
-	void render(Image* fb);
-
-	void move_up();
-	void move_down();
-	void move_left();
-	void move_right();
-
-	void update_position(double dt);
-	
-	// TODO: ASK, ya que ambos Player y NPC van a tener move tengo que poner la signature de move aquí?
-	// virtual void move(double dt, double time);
-};
-
-class Player : public Character
-{
-public:
-	Vector2 camera_position;
-
-	Player() {};
-
-	Player(const char* spritename, Vector2 position, int movement_speed, int resting_side);
+	void set_velocity(Vector2 velocity);
+	void set_side(int side, double time);
 
 	void render(Image* fb, Vector2 camera_position);
 	
 	void move(double dt, double time);
-	
-	void update_position(double dt);
-};
-
-class NPC : public Character 
-{
-public:
-	NPC(const char* spritename, Vector2 position, int movement_speed, int resting_side);
-
-	//void move(double dt, double time, Vector2 fb_size, Vector2 map_size);
 };

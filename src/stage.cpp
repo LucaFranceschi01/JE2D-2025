@@ -20,7 +20,7 @@ IntroStage::IntroStage()
 	bool good = this->gameMap.loadGameMap("data/map.json");
 	assert(good);
 	Vector2 player_initial_position = Vector2{ this->gameMap.size.x * 0.4f, this->gameMap.size.y * 0.95f };
-	this->player = Player("data/johnnysilverhand.tga", player_initial_position, 100, FACE_DOWN);
+	this->player = Player("data/johnnysilverhand.tga", player_initial_position, 100);
 }
 
 void IntroStage::render(Image* fb)
@@ -47,41 +47,51 @@ void IntroStage::render(Image* fb)
 
 void IntroStage::update(double dt)
 {
-	Vector2 target = player.position;
 	Vector2 offset = { 0.0, 0.0 };
+	Vector2 velocity = { 0.0, 0.0 };
+	player.frame = RESTING_FRAME;
 
 	if (Input::isKeyPressed(SDL_SCANCODE_UP) || Input::isKeyPressed(SDL_SCANCODE_W)) //if key up
 	{
-		offset.y = 2; // just two pixels above 
-		target.y -= 1.0;
+		offset.y = 2; // just two pixels above // TODO: CHANGE
+		velocity.y -= 1.0;
+		player.set_side(FACE_UP, time);
 	}
 	if (Input::isKeyPressed(SDL_SCANCODE_DOWN) || Input::isKeyPressed(SDL_SCANCODE_S)) //if key down
 	{
 		offset.y -= 1; // just one pixel below
-		target.y += 1.0;
+		velocity.y += 1.0;
+		player.set_side(FACE_DOWN, time);
 	}
 	if (Input::isKeyPressed(SDL_SCANCODE_LEFT) || Input::isKeyPressed(SDL_SCANCODE_A)) //if key left
 	{
 		offset.x = 0.2 * CH_WIDTH;
-		target.x -= 1.0;
+		velocity.x -= 1.0;
+		player.set_side(FACE_LEFT, time);
 	}
 	if (Input::isKeyPressed(SDL_SCANCODE_RIGHT) || Input::isKeyPressed(SDL_SCANCODE_D)) //if key right
 	{
 		offset.x = -0.2 * CH_WIDTH;
-		target.x += 1.0;
+		velocity.x += 1.0;
+		player.set_side(FACE_RIGHT, time);
 	}
+
+	Vector2 target = this->player.position + velocity;
 
 	if (this->is_valid(target, offset)) {
-		this->player.position = target;
+		player.set_velocity(velocity);
 	}
 	else if (this->is_valid(Vector2(target.x, this->player.position.y), offset)) {
-		this->player.position = Vector2(target.x, this->player.position.y);
+		player.set_velocity(Vector2(velocity.x, 0.0));
 	}
 	else if (this->is_valid(Vector2(this->player.position.x, target.y), offset)) {
-		this->player.position = Vector2(this->player.position.x, target.y);
+		player.set_velocity(Vector2(0.0, velocity.y));
+	}
+	else {
+		player.set_velocity(Vector2(0.0, 0.0));
 	}
 
-	// this->player.move(dt, this->time);
+	player.move(dt, this->time);
 
 	this->time++;
 }
@@ -95,21 +105,6 @@ void IntroStage::camera_clamp(Vector2 fb_size)
 
 bool IntroStage::is_valid(Vector2 target, Vector2 offset)
 {
-	/*float px = floor(target.x / this->gameMap.tile_width - offset.x * CH_WIDTH) * this->gameMap.tile_width;
-	float py = floor(target.y / this->gameMap.tile_height - offset.y * CH_HEIGHT) * this->gameMap.tile_height;*/
-
-	/*float px = target.x + offset.x;
-	float py = target.y + offset.y;*/
-	
-	/*float px = floor(target.x / this->gameMap.tile_width) * this->gameMap.tile_width;
-	float py = floor(target.y / this->gameMap.tile_height) * this->gameMap.tile_height;*/
-
-	/*float px = floor((target.x - offset.x) / this->gameMap.tile_width) * this->gameMap.tile_width;
-	float py = floor((target.y - offset.y) / this->gameMap.tile_height) * this->gameMap.tile_height;
-
-	int cx = floor(px / this->gameMap.tile_width);
-	int cy = floor(py / this->gameMap.tile_height);*/
-
 	int cx = floor((target.x - offset.x) / this->gameMap.tile_width);
 	int cy = floor((target.y - offset.y) / this->gameMap.tile_height);
 
