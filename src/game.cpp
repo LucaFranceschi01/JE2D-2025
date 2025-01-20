@@ -17,7 +17,10 @@ Image minifont;
 Color bgcolor(130, 80, 100);
 
 enum eStageID {
-	STAGE_INTRO
+	STAGE_INTRO,
+	STAGE_FORWARD,
+	STAGE_TEMPLE,
+	STAGE_BACKWARDS
 };
 
 Game::Game(int window_width, int window_height, SDL_Window* window)
@@ -45,7 +48,7 @@ Game::Game(int window_width, int window_height, SDL_Window* window)
 	//synth.osc1.amplitude = 0.5;
 
 	stages[0] = new PlayStage();
-	stages[1] = new PlayStage();
+	//stages[1] = new PlayStage();
 
 	current_stage = stages[0];
 	//player.cameraClamp(fb_size, gameMap->map_size);

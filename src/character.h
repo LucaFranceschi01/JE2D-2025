@@ -7,17 +7,15 @@
 #include "math.h"
 #include "image.h"
 
-constexpr auto CH_WIDTH = 32;
-constexpr auto CH_HEIGHT = 32;
-constexpr auto FRAMES = 3;
+constexpr auto CH_WIDTH = 16;
+constexpr auto CH_HEIGHT = 16;
+constexpr auto FRAMES = 2;
 constexpr auto RESTING_FRAME = 1;
 constexpr auto ANIMATION_SPEED = 0.2;
 
 enum {
-	FACE_DOWN,
-	FACE_LEFT,
 	FACE_RIGHT,
-	FACE_UP
+	FACE_LEFT
 };
 
 class Player

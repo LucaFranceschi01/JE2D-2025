@@ -13,8 +13,10 @@
 // than 16x16, since you will have more than
 // 256 different tiles
 
+constexpr auto SPACING = 1;
+
 enum eCellType : uint64_t {
-	EMPTY, START, WALL=517, DOOR, CHEST
+	EMPTY, START, COLLISION=106, DOOR, CHEST
 };
 
 enum eItemType : uint64_t {

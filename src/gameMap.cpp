@@ -19,8 +19,8 @@ sCell& GameMap::getCell(int x, int y, int l)
 
 void GameMap::render(Image* fb, Vector2 camera_pos, int layer_id)
 {
-    int num_tiles_x = this->tileset.width / this->tile_width;
-    int num_tiles_y = this->tileset.height / this->tile_height;
+    int num_tiles_x = (this->tileset.width+SPACING) / (this->tile_width+SPACING);
+    int num_tiles_y = (this->tileset.height+SPACING) / (this->tile_height+SPACING);
 
     // For every cell
     for (int x = 0; x < this->width; ++x)
@@ -34,8 +34,8 @@ void GameMap::render(Image* fb, Vector2 camera_pos, int layer_id)
             int type = (int)cell.type;
 
             // Compute tile pos in tileset image
-            int tilex = (type % num_tiles_x) * this->tile_width;
-            int tiley = floor(type / num_tiles_x) * this->tile_height; // Fixed divisor
+            int tilex = (type % num_tiles_x) * this->tile_width + (type % num_tiles_x);
+            int tiley = floor(type / num_tiles_x) * this->tile_height + floor(type / num_tiles_x); // Fixed divisor
 
             // Create tile area
             Area area(tilex, tiley, this->tile_width, this->tile_height);

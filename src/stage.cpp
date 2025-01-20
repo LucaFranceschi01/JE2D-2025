@@ -5,7 +5,7 @@
 #include "input.h"
 
 enum {
-	FLOOR, OBJECTS, FURNITURE, PROPS, WALL_FACE, WALL_TOP, COLLISIONS
+	BACKGROUND, WATER, GRASS, PLATFORMS, DEBUG, COLLISIONS
 };
 
 Stage::Stage()
@@ -16,32 +16,34 @@ Stage::Stage()
 
 PlayStage::PlayStage()
 {
-	this->gameMap = GameMap("data/tileset.tga");
-	bool good = this->gameMap.loadGameMap("data/map.json");
+	this->gameMap = GameMap("data/tileset2.tga");
+	bool good = this->gameMap.loadGameMap("data/map1.json");
 	assert(good);
-	Vector2 player_initial_position = Vector2{ this->gameMap.size.x * 0.4f, this->gameMap.size.y * 0.95f };
-	this->player = Player("data/johnnysilverhand.tga", player_initial_position, 100);
+	//Vector2 player_initial_position = Vector2{ this->gameMap.size.x * 0.4f, this->gameMap.size.y * 0.95f };
+	Vector2 player_initial_position = Vector2{ 20.0, 20.0 };
+	this->player = Player("data/bicho.tga", player_initial_position, 100);
 }
 
 void PlayStage::render(Image* fb)
 {
 	current_stage->camera_clamp(Vector2(fb->width, fb->height));
 
-	gameMap.render(fb, this->camera_position, FLOOR);
-	gameMap.render(fb, this->camera_position, OBJECTS);
-	gameMap.render(fb, this->camera_position, FURNITURE);
-	gameMap.render(fb, this->camera_position, PROPS);
+	gameMap.render(fb, this->camera_position, BACKGROUND);
+	gameMap.render(fb, this->camera_position, WATER);
+	gameMap.render(fb, this->camera_position, GRASS);
+	gameMap.render(fb, this->camera_position, PLATFORMS);
 
-	if (player.position.y < 240.0) {
+	/*if (player.position.y < 240.0) {
 		player.render(fb, this->camera_position);
 		gameMap.render(fb, this->camera_position, WALL_FACE);
 	}
 	else {
 		gameMap.render(fb, this->camera_position, WALL_FACE);
-		player.render(fb, this->camera_position);
-	}
+	}*/
+	player.render(fb, this->camera_position);
 
-	gameMap.render(fb, this->camera_position, WALL_TOP);
+	gameMap.render(fb, this->camera_position, DEBUG);
+	//gameMap.render(fb, this->camera_position, COLLISIONS);
 }
 
 void PlayStage::update(double dt)
@@ -61,13 +63,13 @@ void PlayStage::handle_player_movement(double dt)
 	{
 		offset.y = 2; // just two pixels above // TODO: CHANGE
 		velocity.y -= 1.0;
-		player.set_side(FACE_UP, time);
+		//player.set_side(, time);
 	}
 	if (Input::isKeyPressed(SDL_SCANCODE_DOWN) || Input::isKeyPressed(SDL_SCANCODE_S)) //if key down
 	{
 		offset.y -= 1; // just one pixel below
 		velocity.y += 1.0;
-		player.set_side(FACE_DOWN, time);
+		//player.set_side(FACE_DOWN, time);
 	}
 	if (Input::isKeyPressed(SDL_SCANCODE_LEFT) || Input::isKeyPressed(SDL_SCANCODE_A)) //if key left
 	{
@@ -131,7 +133,7 @@ bool PlayStage::is_valid(Vector2 target, Vector2 offset)
 
 	int cell_type = this->gameMap.getCell(cx, cy, COLLISIONS).type;
 
-	if (cell_type == WALL) {
+	if (cell_type == COLLISION) {
 		return false;
 	}
 	return true;
