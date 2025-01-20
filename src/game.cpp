@@ -2,7 +2,7 @@
 #include "utils.h"
 #include "input.h"
 #include "image.h"
-#include "character.h"
+#include "player.h"
 #include "gameMap.h"
 #include "stage.h"
 

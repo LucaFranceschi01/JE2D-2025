@@ -1,19 +1,8 @@
 #include "gameMap.h"
 #include "image.h"
 
- #define RENDER_DEBUG
-
 #ifdef RENDER_DEBUG
-struct s_debug_data {
-    struct s_debug_cell {
-        int cx;
-        int cy;
-        double time;
-    };
-    std::vector<s_debug_cell> cells;
-};
-
-s_debug_data debug_data = {};
+    s_debug_data debug_data = {};
 #endif
 
 GameMap::GameMap(const char* tileset_filename) {

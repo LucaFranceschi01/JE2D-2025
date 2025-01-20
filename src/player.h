@@ -1,5 +1,5 @@
 /*	by Luca Franceschi
-	This class encapsulates a character and all the things related to rendering one (e.g.: main character or NPC)
+	This class encapsulates a player
 */
 
 #pragma once
@@ -7,11 +7,13 @@
 #include "math.h"
 #include "image.h"
 
+class GameMap;
+
 constexpr auto CH_WIDTH = 16;
 constexpr auto CH_HEIGHT = 16;
 constexpr auto FRAMES = 5;
 constexpr auto RESTING_FRAME = 1;
-constexpr auto ANIMATION_SPEED = 0.2;
+constexpr auto ANIMATION_SPEED = 10.0;
 
 enum {
 	FACE_RIGHT,
@@ -27,10 +29,12 @@ public:
 	int frame;
 	Vector2 position;
 	Vector2 velocity;
+	Vector2 offset;
 	int movement_speed;
 	const char* spritename;
+	bool grounded;
 	Image sprite;
-	bool on_air;
+	double time;
 
 	Player();
 
@@ -39,12 +43,13 @@ public:
 	Player(const char* spritename, Vector2 position, int movement_speed);
 
 	void set_velocity(Vector2 velocity);
-	void set_side(int side, double time);
+	void set_side(int side);
 
 	void render(Image* fb, Vector2 camera_position);
-	
-	void move(double dt, double time);
-	void jump();
+	void update(double dt);
+	Vector2 handle_input();
 
-	void set_on_air(bool on_air);
+	void is_grounded(GameMap* map);
+	void move(GameMap* map, Vector2 target);
+	bool is_valid_target(GameMap* map, Vector2 target);
 };

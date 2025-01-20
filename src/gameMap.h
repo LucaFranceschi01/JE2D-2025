@@ -15,6 +15,23 @@
 
 constexpr auto SPACING = 1;
 
+//#define RENDER_DEBUG
+
+#ifdef RENDER_DEBUG
+struct s_debug_data {
+	struct s_debug_cell {
+		int cx;
+		int cy;
+		double time;
+	};
+	std::vector<s_debug_cell> cells;
+};
+#endif
+
+enum {
+	BACKGROUND, WATER, GRASS, PLATFORMS, DEBUG, COLLISIONS, WALKABLE
+};
+
 enum eCellType : uint64_t {
 	EMPTY, START, COLLISION=106, FLOOR=455, END
 };

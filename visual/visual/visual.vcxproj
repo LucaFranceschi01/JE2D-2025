@@ -11,7 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\src\character.cpp" />
+    <ClCompile Include="..\..\src\player.cpp" />
     <ClCompile Include="..\..\src\gameMap.cpp" />
     <ClCompile Include="..\..\src\math.cpp" />
     <ClCompile Include="..\..\src\game.cpp" />
@@ -23,7 +23,7 @@
     <ClCompile Include="..\..\src\utils.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\src\character.h" />
+    <ClInclude Include="..\..\src\player.h" />
     <ClInclude Include="..\..\src\gameMap.h" />
     <ClInclude Include="..\..\src\json.hpp" />
     <ClInclude Include="..\..\src\math.h" />

@@ -23,7 +23,7 @@
 
 // hasta collisions
 
-#include "character.h"
+#include "player.h"
 #include "gameMap.h"
 #include "math.h"
 #include "input.h"
@@ -43,7 +43,7 @@ public:
 
 	virtual void camera_clamp(Vector2 fb_size) {};
 	virtual bool is_valid(Vector2 target) { return true; };
-	virtual void handle_player_movement(double dt) {};
+	//virtual void handle_player_movement(double dt) {};
 
 	virtual void onEnter() {};
 	virtual void onLeave() {};
@@ -64,9 +64,9 @@ public:
 	void update(double dt) override;
 
 	void camera_clamp(Vector2 fb_size) override;
-	bool is_valid(Vector2 target, Vector2 offset);
-	bool is_player_grounded(Vector2 target, Vector2 offset);
-	void handle_player_movement(double dt) override;
+	/*bool is_valid(Vector2 target, Vector2 offset);
+	bool is_player_grounded(Vector2 target, Vector2 offset);*/
+	//void handle_player_movement(double dt) override;
 
 	void onEnter() override;
 	void onLeave() override;
