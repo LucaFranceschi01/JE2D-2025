@@ -5,7 +5,7 @@
 #include "input.h"
 
 enum {
-	BACKGROUND, WATER, GRASS, PLATFORMS, DEBUG, COLLISIONS
+	BACKGROUND, WATER, GRASS, PLATFORMS, DEBUG, COLLISIONS, WALKABLE
 };
 
 Stage::Stage()
@@ -20,8 +20,8 @@ PlayStage::PlayStage()
 	bool good = this->gameMap.loadGameMap("data/map1.json");
 	assert(good);
 	//Vector2 player_initial_position = Vector2{ this->gameMap.size.x * 0.4f, this->gameMap.size.y * 0.95f };
-	Vector2 player_initial_position = Vector2{ 20.0, 20.0 };
-	this->player = Player("data/bicho.tga", player_initial_position, 100);
+	this->player = Player("data/bicho.tga");
+	onEnter();
 }
 
 void PlayStage::render(Image* fb)
@@ -49,27 +49,24 @@ void PlayStage::render(Image* fb)
 void PlayStage::update(double dt)
 {
 	handle_player_movement(dt);
-	
+
+	gameMap.update(dt);
+
 	this->time++;
 }
 
 void PlayStage::handle_player_movement(double dt)
 {
-	Vector2 offset = { 0.0, 0.0 };
-	Vector2 velocity = { 0.0, 0.0 };
+	Vector2 offset = { 0.0, 2.0 };
+	Vector2 velocity = player.velocity;
 	player.frame = RESTING_FRAME;
 
-	if (Input::isKeyPressed(SDL_SCANCODE_UP) || Input::isKeyPressed(SDL_SCANCODE_W)) //if key up
+	/*if (Input::isKeyPressed(SDL_SCANCODE_UP) || Input::isKeyPressed(SDL_SCANCODE_W)) //if key up
 	{
 		offset.y = 2; // just two pixels above // TODO: CHANGE
 		velocity.y -= 1.0;
 		//player.set_side(, time);
-	}
-	if (Input::isKeyPressed(SDL_SCANCODE_DOWN) || Input::isKeyPressed(SDL_SCANCODE_S)) //if key down
-	{
-		offset.y -= 1; // just one pixel below
-		velocity.y += 1.0;
-		//player.set_side(FACE_DOWN, time);
+		//player.jump();
 	}
 	if (Input::isKeyPressed(SDL_SCANCODE_LEFT) || Input::isKeyPressed(SDL_SCANCODE_A)) //if key left
 	{
@@ -82,6 +79,31 @@ void PlayStage::handle_player_movement(double dt)
 		offset.x = -0.2 * CH_WIDTH;
 		velocity.x += 1.0;
 		player.set_side(FACE_RIGHT, time);
+	}*/
+
+	if (Input::isKeyPressed(SDL_SCANCODE_LEFT) || Input::isKeyPressed(SDL_SCANCODE_A)) //if key left
+	{
+		offset.x = 0.2 * CH_WIDTH;
+		velocity.x -= 0.1;
+		player.set_side(FACE_LEFT, time);
+	}
+	if (Input::isKeyPressed(SDL_SCANCODE_RIGHT) || Input::isKeyPressed(SDL_SCANCODE_D)) //if key right
+	{
+		offset.x = -0.2 * CH_WIDTH;
+		velocity.x += 0.1;
+		player.set_side(FACE_RIGHT, time);
+	}
+
+	bool is_grounded = this->is_player_grounded(player.position, offset);
+
+	if (!is_grounded) {
+		velocity.y += 0.2;
+	}
+
+	if (is_grounded && (Input::isKeyPressed(SDL_SCANCODE_UP) || Input::isKeyPressed(SDL_SCANCODE_W))) //if key up
+	{
+		velocity.y -= 1.0;
+		this->player.jump();
 	}
 
 	Vector2 target = this->player.position + velocity;
@@ -104,6 +126,7 @@ void PlayStage::handle_player_movement(double dt)
 
 void PlayStage::onEnter()
 {
+	player.position = Vector2(20.0, 20.0);
 }
 
 void PlayStage::onLeave()
@@ -131,10 +154,27 @@ bool PlayStage::is_valid(Vector2 target, Vector2 offset)
 	int cx = floor((target.x - offset.x) / this->gameMap.tile_width);
 	int cy = floor((target.y - offset.y) / this->gameMap.tile_height);
 
+	//this->gameMap.add_debug_cell(cx, cy);
+	
 	int cell_type = this->gameMap.getCell(cx, cy, COLLISIONS).type;
 
 	if (cell_type == COLLISION) {
 		return false;
 	}
 	return true;
+}
+
+bool PlayStage::is_player_grounded(Vector2 position, Vector2 offset)
+{
+	int cx = floor((position.x - offset.x) / this->gameMap.tile_width);
+	int cy = floor((position.y - offset.y) / this->gameMap.tile_height);
+
+	this->gameMap.add_debug_cell(cx, cy);
+
+	int cell_type = this->gameMap.getCell(cx, cy, WALKABLE).type;
+
+	if (cell_type == FLOOR) {
+		return true;
+	}
+	return false;
 }

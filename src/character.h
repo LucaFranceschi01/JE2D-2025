@@ -9,13 +9,15 @@
 
 constexpr auto CH_WIDTH = 16;
 constexpr auto CH_HEIGHT = 16;
-constexpr auto FRAMES = 2;
+constexpr auto FRAMES = 5;
 constexpr auto RESTING_FRAME = 1;
 constexpr auto ANIMATION_SPEED = 0.2;
 
 enum {
 	FACE_RIGHT,
-	FACE_LEFT
+	FACE_LEFT,
+	JUMP_RIGHT,
+	JUMP_LEFT
 };
 
 class Player
@@ -28,8 +30,11 @@ public:
 	int movement_speed;
 	const char* spritename;
 	Image sprite;
+	bool on_air;
 
 	Player();
+
+	Player(const char* spritename);
 
 	Player(const char* spritename, Vector2 position, int movement_speed);
 
@@ -39,4 +44,7 @@ public:
 	void render(Image* fb, Vector2 camera_position);
 	
 	void move(double dt, double time);
+	void jump();
+
+	void set_on_air(bool on_air);
 };

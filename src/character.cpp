@@ -13,6 +13,15 @@ Player::Player()
 	this->velocity = { 0.0, 0.0 };
 }
 
+Player::Player(const char* spritename)
+{
+	this->spritename = spritename;
+	this->movement_speed = 100;
+	this->frame = RESTING_FRAME;
+	this->velocity = { 0.0, 0.0 };
+	this->sprite.loadTGA(this->spritename);
+}
+
 Player::Player(const char* spritename, Vector2 position, int movement_speed)
 {
 	this->spritename = spritename;
@@ -47,7 +56,17 @@ void Player::render(Image* fb, Vector2 camera_position)
 void Player::move(double dt, double time)
 {
 	if (this->velocity.length() > 0.0) {
-		this->velocity.normalize();
+		//this->velocity.normalize();
 		this->position += this->velocity * this->movement_speed * dt;
 	}
+}
+
+void Player::jump()
+{
+	set_on_air(true);
+}
+
+void Player::set_on_air(bool on_air)
+{
+	this->on_air = on_air;
 }

@@ -1,6 +1,21 @@
 #include "gameMap.h"
 #include "image.h"
 
+ #define RENDER_DEBUG
+
+#ifdef RENDER_DEBUG
+struct s_debug_data {
+    struct s_debug_cell {
+        int cx;
+        int cy;
+        double time;
+    };
+    std::vector<s_debug_cell> cells;
+};
+
+s_debug_data debug_data = {};
+#endif
+
 GameMap::GameMap(const char* tileset_filename) {
 	this->layers = nullptr;
 	this->width = 0;
@@ -34,8 +49,8 @@ void GameMap::render(Image* fb, Vector2 camera_pos, int layer_id)
             int type = (int)cell.type;
 
             // Compute tile pos in tileset image
-            int tilex = (type % num_tiles_x) * this->tile_width + (type % num_tiles_x);
-            int tiley = floor(type / num_tiles_x) * this->tile_height + floor(type / num_tiles_x); // Fixed divisor
+            int tilex = (type % num_tiles_x) * (this->tile_width + SPACING);
+            int tiley = floor(type / num_tiles_x) * (this->tile_height + SPACING); // Fixed divisor
 
             // Create tile area
             Area area(tilex, tiley, this->tile_width, this->tile_height);
@@ -53,6 +68,12 @@ void GameMap::render(Image* fb, Vector2 camera_pos, int layer_id)
             fb->drawImage(this->tileset, screenx, screeny, area);
         }
     }
+#ifdef RENDER_DEBUG
+    Color red(255, 0, 0);
+    for (const auto& dc : debug_data.cells) {
+        fb->drawRectangle(dc.cx * this->tile_width - camera_pos.x, dc.cy * this->tile_height - camera_pos.y, this->tile_width, this->tile_height, red);
+    }
+#endif
 }
 
 bool GameMap::loadGameMap(const char* filename)
@@ -93,4 +114,25 @@ bool GameMap::loadGameMap(const char* filename)
     this->size.y = this->tile_height * this->height;
 
     return true;
+}
+
+void GameMap::update(double dt)
+{
+#ifdef RENDER_DEBUG
+    for (auto& dc : debug_data.cells) {
+        dc.time -= dt;
+
+        if (dc.time < 0.0f) {
+            debug_data.cells.erase(debug_data.cells.begin());
+        }
+    }
+#endif
+}
+
+void GameMap::add_debug_cell(int cx, int cy, double time)
+{
+#ifdef RENDER_DEBUG
+    s_debug_data::s_debug_cell cell{cx, cy, time};
+    debug_data.cells.push_back(cell);
+#endif
 }

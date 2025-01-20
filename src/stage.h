@@ -65,6 +65,7 @@ public:
 
 	void camera_clamp(Vector2 fb_size) override;
 	bool is_valid(Vector2 target, Vector2 offset);
+	bool is_player_grounded(Vector2 target, Vector2 offset);
 	void handle_player_movement(double dt) override;
 
 	void onEnter() override;

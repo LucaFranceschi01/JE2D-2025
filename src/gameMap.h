@@ -16,7 +16,7 @@
 constexpr auto SPACING = 1;
 
 enum eCellType : uint64_t {
-	EMPTY, START, COLLISION=106, DOOR, CHEST
+	EMPTY, START, COLLISION=106, FLOOR=455, END
 };
 
 enum eItemType : uint64_t {
@@ -55,7 +55,9 @@ public:
 
 	void render(Image* fb, Vector2 camera_pos, int layer_id);
 	
-	bool loadGameMap(const char* filename); // TODO: PONER DENTRO DE LA CLASE
+	bool loadGameMap(const char* filename);
 
 	// TODO: poner getStartPosition
+	void update(double dt);
+	void add_debug_cell(int cx, int cy, double time = 1.0);
 };
