@@ -45,7 +45,7 @@ public:
 	void set_velocity(Vector2 velocity);
 	void set_side(int side);
 
-	void render(Image* fb, Vector2 camera_position);
+	void render(Image* fb, Vector2 camera_position = { 0.0, 0.0 });
 	void update(double dt);
 	Vector2 handle_input();
 

@@ -6,14 +6,14 @@
 
 Stage::Stage()
 {
-	this->current_stage = this;
+	//this->current_stage = this;
 	this->time = 0;
 }
 
 PlayStage::PlayStage()
 {
-	this->gameMap = GameMap("data/tileset2.tga");
-	bool good = this->gameMap.loadGameMap("data/map1.json");
+	this->gameMap = GameMap("data/tileset.tga");
+	bool good = this->gameMap.loadGameMap("data/map_forward.json");
 	assert(good);
 	this->player = Player("data/bicho.tga");
 	onEnter();
@@ -28,7 +28,8 @@ void PlayStage::render(Image* fb)
 	gameMap.render(fb, this->camera_position, GRASS);
 	gameMap.render(fb, this->camera_position, PLATFORMS);
 	gameMap.render(fb, this->camera_position, DEBUG);
-	gameMap.render(fb, this->camera_position, COLLISIONS);
+
+	//gameMap.render(fb, this->camera_position, COLLISIONS);
 	//gameMap.render(fb, this->camera_position, WALKABLE);
 
 	player.render(fb, this->camera_position);
@@ -56,6 +57,7 @@ void PlayStage::onEnter()
 
 void PlayStage::onLeave()
 {
+	// TODO
 }
 
 void PlayStage::onKeyDown(SDL_KeyboardEvent event)
@@ -66,7 +68,6 @@ void PlayStage::onKeyUp(SDL_KeyboardEvent event)
 {
 }
 
-
 void PlayStage::camera_clamp(Vector2 fb_size)
 {
 	this->camera_position = this->player.position - fb_size * 0.5; // also update camera position
@@ -74,32 +75,38 @@ void PlayStage::camera_clamp(Vector2 fb_size)
 	this->camera_position.y = clamp(this->camera_position.y, 0.0f, this->gameMap.size.y - fb_size.y);
 }
 
-//bool PlayStage::is_valid(Vector2 target, Vector2 offset)
-//{
-//	int cx = floor((target.x - offset.x) / this->gameMap.tile_width);
-//	int cy = floor((target.y - offset.y) / this->gameMap.tile_height);
-//
-//	//this->gameMap.add_debug_cell(cx, cy);
-//	
-//	int cell_type = this->gameMap.getCell(cx, cy, COLLISIONS).type;
-//
-//	if (cell_type == COLLISION) {
-//		return false;
-//	}
-//	return true;
-//}
-//
-//bool PlayStage::is_player_grounded(Vector2 position, Vector2 offset)
-//{
-//	int cx = floor((position.x - offset.x) / this->gameMap.tile_width);
-//	int cy = floor((position.y - offset.y) / this->gameMap.tile_height);
-//
-//	this->gameMap.add_debug_cell(cx, cy);
-//
-//	int cell_type = this->gameMap.getCell(cx, cy, WALKABLE).type;
-//
-//	if (cell_type == FLOOR) {
-//		return true;
-//	}
-//	return false;
-//}
+IntroStage::IntroStage()
+{
+	this->gameMap = GameMap("data/tileset.tga");
+	bool good = this->gameMap.loadGameMap("data/map_forward.json");
+	assert(good);
+
+	this->player = Player("data/bicho.tga");
+	onEnter();
+}
+
+void IntroStage::render(Image* fb)
+{
+	player.render(fb);
+}
+
+void IntroStage::update(double dt)
+{
+}
+
+void IntroStage::onEnter()
+{
+	player.position = Vector2(20.0, 20.0);
+}
+
+void IntroStage::onLeave()
+{
+}
+
+void IntroStage::onKeyDown(SDL_KeyboardEvent event)
+{
+}
+
+void IntroStage::onKeyUp(SDL_KeyboardEvent event)
+{
+}

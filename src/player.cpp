@@ -4,7 +4,7 @@
 #include "input.h"
 #include "gameMap.h"
 
-Image debug_font; // TODO: remove
+//Image debug_font; // TODO: remove
 
 Player::Player()
 {
@@ -17,8 +17,7 @@ Player::Player()
 	this->offset = { 0.0, 0.0 };
 	this->grounded = false;
 	this->time = 0.0;
-	debug_font.loadTGA("data/mini-font-white-4x6.tga");
-
+	//debug_font.loadTGA("data/mini-font-white-4x6.tga");
 }
 
 Player::Player(const char* spritename)
@@ -30,11 +29,11 @@ Player::Player(const char* spritename)
 	this->position = { 0.0, 0.0 };
 	this->velocity = { 0.0, 0.0 };
 	this->offset = { 0.0, 0.0 };
-	this->sprite.loadTGA(this->spritename);
+	bool good = this->sprite.loadTGA(this->spritename);
+	assert(good);
 	this->grounded = false;
 	this->time = 0.0;
-	debug_font.loadTGA("data/mini-font-white-4x6.tga");
-
+	//debug_font.loadTGA("data/mini-font-white-4x6.tga");
 }
 
 Player::Player(const char* spritename, Vector2 position, int movement_speed)
@@ -46,11 +45,11 @@ Player::Player(const char* spritename, Vector2 position, int movement_speed)
 	this->side = FACE_RIGHT;
 	this->velocity = { 0.0, 0.0 };
 	this->offset = { 0.0, 0.0 };
-	this->sprite.loadTGA(this->spritename);
+	bool good = this->sprite.loadTGA(this->spritename);
+	assert(good);
 	this->grounded = false;
 	this->time = 0.0;
-	debug_font.loadTGA("data/mini-font-white-4x6.tga");
-
+	//debug_font.loadTGA("data/mini-font-white-4x6.tga");
 }
 
 void Player::set_velocity(Vector2 velocity)
@@ -66,13 +65,15 @@ void Player::set_side(int side)
 
 void Player::render(Image* fb, Vector2 camera_position)
 {
-	//fb->drawImage(this->sprite, this->position.x - CH_WIDTH * 0.5, this->position.y - CH_HEIGHT + 2, Area(this->frame * CH_WIDTH, this->side * CH_HEIGHT, CH_WIDTH, CH_HEIGHT));
-	//fb->drawImage(this->sprite, this->position.x - camera_position.x - CH_WIDTH * 0.5, this->position.y - camera_position.y - CH_HEIGHT + 2, Area(this->frame * CH_WIDTH, this->side * CH_HEIGHT, CH_WIDTH, CH_HEIGHT));
 	fb->drawImage(this->sprite, this->position.x - camera_position.x - CH_WIDTH * 0.5, this->position.y - camera_position.y - CH_HEIGHT + 2, Area(this->frame * CH_WIDTH, this->side * CH_HEIGHT, CH_WIDTH, CH_HEIGHT));
+	
+#ifdef RENDER_DEBUG
 	Color red(255, 0, 0); // TODO: remove debug code
-	fb->drawRectangle(this->position.x - offset.x - camera_position.x, this->position.y - offset.y - camera_position.y, 1, 1, red);
 	std::string result = grounded ? "TRUE" : "FALSE";
-	fb->drawText(result, this->position.x - camera_position.x, this->position.y - camera_position.y, debug_font, 4, 6);
+
+	fb->drawRectangle(this->position.x - offset.x - camera_position.x, this->position.y - offset.y - camera_position.y, 1, 1, red);
+	//fb->drawText(result, this->position.x - camera_position.x, this->position.y - camera_position.y, debug_font, 4, 6);
+#endif
 }
 
 void Player::update(double dt)
@@ -83,9 +84,6 @@ void Player::update(double dt)
 
 	velocity.x = clamp(velocity.x, -2.0, 2.0);
 	velocity.y = clamp(velocity.y, -2.5, 1.5);
-
-	/*offset.x = 0.1 * CH_WIDTH;
-	offset.x = -0.1 * CH_WIDTH;*/
 	
 	this->time += dt;
 }
@@ -93,7 +91,7 @@ void Player::update(double dt)
 Vector2 Player::handle_input()
 {
 	frame = RESTING_FRAME;
-
+	
 	Vector2 velocity = this->velocity;
 
 	if (Input::isKeyPressed(SDL_SCANCODE_LEFT) || Input::isKeyPressed(SDL_SCANCODE_A)) //if key left

@@ -16,7 +16,7 @@ Image font;
 Image minifont;
 Color bgcolor(130, 80, 100);
 
-enum eStageID {
+enum {
 	STAGE_INTRO,
 	STAGE_FORWARD,
 	STAGE_TEMPLE,
@@ -47,10 +47,10 @@ Game::Game(int window_width, int window_height, SDL_Window* window)
 	// sample-> ...
 	//synth.osc1.amplitude = 0.5;
 
-	stages[0] = new PlayStage();
-	//stages[1] = new PlayStage();
+	stages[STAGE_INTRO] = new IntroStage();
+	stages[STAGE_FORWARD] = new PlayStage();
 
-	current_stage = stages[0];
+	current_stage = stages[STAGE_INTRO];
 	//player.cameraClamp(fb_size, gameMap->map_size);
 }
 
@@ -84,22 +84,22 @@ void Game::update(double seconds_elapsed)
 	current_stage->update(seconds_elapsed);
 
 	//example of 'was pressed'
-	if (Input::wasKeyPressed(SDL_SCANCODE_A)) //if key A was pressed
-	{
-	}
-	if (Input::wasKeyPressed(SDL_SCANCODE_Z)) //if key Z was pressed
-	{
-	}
+	//if (Input::wasKeyPressed(SDL_SCANCODE_A)) //if key A was pressed
+	//{
+	//}
+	//if (Input::wasKeyPressed(SDL_SCANCODE_Z)) //if key Z was pressed
+	//{
+	//}
 
-	//to read the gamepad state
-	if (Input::gamepads[0].isButtonPressed(A_BUTTON)) //if the A button is pressed
-	{
-	}
+	////to read the gamepad state
+	//if (Input::gamepads[0].isButtonPressed(A_BUTTON)) //if the A button is pressed
+	//{
+	//}
 
-	if (Input::gamepads[0].direction & PAD_UP) //left stick pointing up
-	{
-		bgcolor.set(0, 255, 0);
-	}
+	//if (Input::gamepads[0].direction & PAD_UP) //left stick pointing up
+	//{
+	//	bgcolor.set(0, 255, 0);
+	//}
 }
 
 void Game::changeStage(int newStage)
@@ -115,8 +115,8 @@ void Game::onKeyDown( SDL_KeyboardEvent event )
 	switch(event.keysym.sym)
 	{
 		case SDLK_ESCAPE: must_exit = true; break; //ESC key, kill the app
-		case SDLK_1: changeStage(0); break;
-		case SDLK_2: changeStage(1); break;
+		case SDLK_1: changeStage(STAGE_INTRO); break;
+		case SDLK_2: changeStage(STAGE_FORWARD); break;
 	}
 	current_stage->onKeyDown(event);
 }
