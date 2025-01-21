@@ -28,12 +28,8 @@ struct s_debug_data {
 };
 #endif
 
-enum {
-	BACKGROUND, WATER, GRASS, PLATFORMS, DEBUG, COLLISIONS, WALKABLE
-};
-
 enum eCellType : uint64_t {
-	EMPTY, START, COLLISION=106, FLOOR=455, END
+	EMPTY, START, COLLISION=490, FLOOR=455, END
 };
 
 enum eItemType : uint64_t {
@@ -59,14 +55,14 @@ public:
     int tile_height;
 	int numLayers;
 	Vector2 size;
-
 	Image tileset;
-
     sLayer* layers;
+	int ground_layer;
+	int collision_layer;
 
 	GameMap() {}; // TODO: ASK: REMOVE AND SEE ERROR
 
-	GameMap(const char* tileset_filename);
+	GameMap(const char* gameMap_filename, int collision_layer);
 
     sCell& getCell(int x, int y, int l);
 
@@ -75,6 +71,7 @@ public:
 	bool loadGameMap(const char* filename);
 
 	// TODO: poner getStartPosition
+
 	void update(double dt);
 	void add_debug_cell(int cx, int cy, double time = 1.0);
 };

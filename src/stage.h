@@ -12,19 +12,31 @@
 
 class Image;
 
+enum {
+	EMPTY_STAGE=-1,
+	STAGE_INTRO,
+	STAGE_FORWARD,
+	STAGE_TEMPLE,
+	STAGE_TEMPLE_REVERSE,
+	STAGE_REVERSE
+};
+
+constexpr auto PREVIOUS_STAGE = 515;
+constexpr auto NEXT_STAGE = 516;
+constexpr auto RELOAD_STAGE = 491;
+
 class Stage
 {
 public:
 	double time;
-	//Stage* current_stage;
 	
 	Stage();
-	//virtual void init() {}; // así lo haces cuando te de la gana
 	virtual void render(Image* fb) {};
 	virtual void update(double dt) {};
 
-	virtual void onEnter() {};
-	virtual void onLeave() {};
+	virtual void onEnter(int previous_state = -1) {};
+	virtual int onLeave() { return -1; };
+	virtual int changeStage() { return -1; };
 
 	virtual void onKeyDown(SDL_KeyboardEvent event) {};
 	virtual void onKeyUp(SDL_KeyboardEvent event) {};
@@ -37,34 +49,55 @@ public:
 	Vector2 camera_position;
 	Player player;
 
-	PlayStage();
-	void render(Image* fb) override;
-	void update(double dt) override;
+	PlayStage(const char* gameMap_filename, int collision_layer);
 
 	void camera_clamp(Vector2 fb_size);
-
-	void onEnter() override;
-	void onLeave() override;
-
-	void onKeyDown(SDL_KeyboardEvent event) override;
-	void onKeyUp(SDL_KeyboardEvent event) override;
 };
 
-class IntroStage : public Stage
+class IntroStage : public PlayStage
 {
 public:
-	GameMap gameMap;
-	Player player;
+	enum e_renderable_layer {
+		FLOOR, WATER, TRAP, GRASS1, GRASS2, OBTACLES, OBJECTS, COLLISIONS, PROGRESS_LAYER
+	};
 
 	IntroStage();
 	void render(Image* fb) override;
 	void update(double dt) override;
 
-	//void camera_clamp(Vector2 fb_size) override;
-
-	void onEnter() override;
-	void onLeave() override;
+	void onEnter(int previous_state = -1) override;
+	int onLeave() override;
+	int changeStage() override;
 
 	void onKeyDown(SDL_KeyboardEvent event) override;
 	void onKeyUp(SDL_KeyboardEvent event) override;
+};
+
+class ForwardStage : public PlayStage
+{
+public:
+	enum e_renderable_layer {
+		BACKGROUND, WATER, GRASS, PLATFORMS, DEBUG, COLLISIONS, WALKABLE, PROGRESS_LAYER
+	};
+
+	ForwardStage();
+	ForwardStage(const char* gameMap_filename);
+	void render(Image* fb) override;
+	void update(double dt) override;
+
+	void onEnter(int previous_state = -1) override;
+	int onLeave() override;
+	int changeStage() override;
+
+	void onKeyDown(SDL_KeyboardEvent event) override;
+	void onKeyUp(SDL_KeyboardEvent event) override;
+};
+
+class TempleStage : public ForwardStage {
+public:
+	TempleStage();
+
+	void onEnter(int previous_state = -1) override;
+	int onLeave() override;
+	int changeStage() override;
 };

@@ -5,7 +5,7 @@
     s_debug_data debug_data = {};
 #endif
 
-GameMap::GameMap(const char* tileset_filename) {
+    GameMap::GameMap(const char* gameMap_filename, int collision_layer) {
 	this->layers = nullptr;
 	this->width = 0;
 	this->height = 0;
@@ -13,7 +13,12 @@ GameMap::GameMap(const char* tileset_filename) {
 	this->tile_width = 0;
 	this->tile_height = 0;
     this->size = Vector2( 0.0, 0.0 ); // resolution "on the framebuffer"
-    this->tileset.loadTGA(tileset_filename);
+    this->collision_layer = collision_layer;
+    this->ground_layer = -1;
+    bool good = this->tileset.loadTGA("data/tileset.tga");
+    assert(good);
+    good = loadGameMap(gameMap_filename);
+    assert(good);
 }
 
 sCell& GameMap::getCell(int x, int y, int l)

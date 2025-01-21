@@ -16,13 +16,6 @@ Image font;
 Image minifont;
 Color bgcolor(130, 80, 100);
 
-enum {
-	STAGE_INTRO,
-	STAGE_FORWARD,
-	STAGE_TEMPLE,
-	STAGE_BACKWARDS
-};
-
 Game::Game(int window_width, int window_height, SDL_Window* window)
 {
 	this->window_width = window_width;
@@ -47,8 +40,11 @@ Game::Game(int window_width, int window_height, SDL_Window* window)
 	// sample-> ...
 	//synth.osc1.amplitude = 0.5;
 
+	/*stages[STAGE_INTRO] = new PlayStage("data/map_intro.json");
+	stages[STAGE_FORWARD] = new PlayStage("data/map_forward.json");*/
 	stages[STAGE_INTRO] = new IntroStage();
-	stages[STAGE_FORWARD] = new PlayStage();
+	stages[STAGE_FORWARD] = new ForwardStage();
+	stages[STAGE_TEMPLE] = new TempleStage();
 
 	current_stage = stages[STAGE_INTRO];
 	//player.cameraClamp(fb_size, gameMap->map_size);
@@ -83,6 +79,12 @@ void Game::update(double seconds_elapsed)
 	// Move the player (if needed)
 	current_stage->update(seconds_elapsed);
 
+	int stage = current_stage->changeStage();
+
+	if (stage >= 0) {
+		changeStage(stage);
+	}
+
 	//example of 'was pressed'
 	//if (Input::wasKeyPressed(SDL_SCANCODE_A)) //if key A was pressed
 	//{
@@ -104,9 +106,9 @@ void Game::update(double seconds_elapsed)
 
 void Game::changeStage(int newStage)
 {
-	current_stage->onLeave();
+	int previous_stage_ID = current_stage->onLeave();
 	current_stage = stages[newStage];
-	current_stage->onEnter();
+	current_stage->onEnter(previous_stage_ID);
 }
 
 //Keyboard event handler (sync input)
@@ -117,6 +119,7 @@ void Game::onKeyDown( SDL_KeyboardEvent event )
 		case SDLK_ESCAPE: must_exit = true; break; //ESC key, kill the app
 		case SDLK_1: changeStage(STAGE_INTRO); break;
 		case SDLK_2: changeStage(STAGE_FORWARD); break;
+		case SDLK_3: changeStage(STAGE_TEMPLE); break;
 	}
 	current_stage->onKeyDown(event);
 }

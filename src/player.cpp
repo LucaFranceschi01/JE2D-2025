@@ -80,15 +80,13 @@ void Player::update(double dt)
 {
 	this->position += this->velocity * this->movement_speed * dt;
 	
-	velocity.x *= 0.9; // friction if not pressing any button
-
 	velocity.x = clamp(velocity.x, -2.0, 2.0);
 	velocity.y = clamp(velocity.y, -2.5, 1.5);
 	
 	this->time += dt;
 }
 
-Vector2 Player::handle_input()
+Vector2 Player::handle_horizontal_input()
 {
 	frame = RESTING_FRAME;
 	
@@ -105,17 +103,7 @@ Vector2 Player::handle_input()
 		set_side(FACE_RIGHT);
 	}
 
-	if (grounded) {
-		velocity.y = 0.0;
-		if (Input::isKeyPressed(SDL_SCANCODE_UP) || Input::isKeyPressed(SDL_SCANCODE_W)) {
-			velocity.y = -2.5;
-		}
-	}
-	else {
-		velocity.y += 0.1;
-	}
-
-	return position + velocity;
+	return velocity;
 }
 
 void Player::is_grounded(GameMap* map)
@@ -127,7 +115,7 @@ void Player::is_grounded(GameMap* map)
 	map->add_debug_cell(cx, cy);
 #endif
 
-	int cell_type = map->getCell(cx, cy, WALKABLE).type;
+	int cell_type = map->getCell(cx, cy, map->ground_layer).type;
 
 	grounded = false;
 	if (cell_type == FLOOR) {
@@ -178,7 +166,7 @@ bool Player::is_valid_target(GameMap* map, Vector2 target)
 	map->add_debug_cell(cx, cy);
 #endif
 
-	int cell_type = map->getCell(cx, cy, COLLISIONS).type;
+	int cell_type = map->getCell(cx, cy, map->collision_layer).type;
 
 	if (cell_type == COLLISION) {
 		return false;

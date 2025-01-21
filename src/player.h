@@ -47,7 +47,7 @@ public:
 
 	void render(Image* fb, Vector2 camera_position = { 0.0, 0.0 });
 	void update(double dt);
-	Vector2 handle_input();
+	Vector2 handle_horizontal_input();
 
 	void is_grounded(GameMap* map);
 	void move(GameMap* map, Vector2 target);
