@@ -37,9 +37,9 @@ void ForwardStage::render(Image* fb)
 	gameMap.render(fb, this->camera_position, PLATFORMS);
 	gameMap.render(fb, this->camera_position, DEBUG);
 
-	gameMap.render(fb, this->camera_position, COLLISIONS);
-	gameMap.render(fb, this->camera_position, WALKABLE);
-	gameMap.render(fb, this->camera_position, PROGRESS_LAYER);
+	// gameMap.render(fb, this->camera_position, COLLISIONS);
+	// gameMap.render(fb, this->camera_position, WALKABLE);
+	// gameMap.render(fb, this->camera_position, PROGRESS_LAYER);
 
 	player.render(fb, this->camera_position);
 }
