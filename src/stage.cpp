@@ -456,3 +456,43 @@ int EndingStage::get_stage()
 {
 	return STAGE_ENDING;
 }
+
+EntryStage::EntryStage()
+{
+	font.loadTGA("data/bitmap-font-white.tga"); //load bitmap-font image
+	minifont.loadTGA("data/mini-font-white-4x6.tga"); //load bitmap-font image
+	bg = Color(128, 73, 104);
+}
+
+void EntryStage::render(Image* fb)
+{
+	fb->fillBlend(bg);
+	fb->drawText("Bugging out", (fb->width * time - fb->width / 2.0) * 0.05, fb->height / 2, font);
+	fb->drawText("The story of Bicho", (fb->width / 2.0 - fb->width * time * 0.1), 3 * fb->height / 4, minifont, 4, 6);
+	fb->drawText("Press 2 to start.", (fb->width/2.0), 9 * fb->height / 10, minifont, 4, 6);
+}
+
+void EntryStage::update(double dt)
+{
+	time += dt;
+}
+
+void EntryStage::onEnter(int previous_state)
+{
+	time = 0.0;
+}
+
+int EntryStage::onLeave()
+{
+	return STAGE_ENTRY;
+}
+
+int EntryStage::changeStage()
+{
+	return EMPTY_STAGE;
+}
+
+int EntryStage::get_stage()
+{
+	return STAGE_ENTRY;
+}

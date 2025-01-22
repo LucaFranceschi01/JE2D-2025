@@ -14,6 +14,7 @@
 
 enum {
 	EMPTY_STAGE=-1,
+	STAGE_ENTRY,
 	STAGE_INTRO,
 	STAGE_FORWARD,
 	STAGE_TEMPLE,
@@ -145,6 +146,24 @@ public:
 
 	EndingStage();
 	
+	void render(Image* fb) override;
+	void update(double dt) override;
+
+	void onEnter(int previous_state = -1) override;
+	int onLeave() override;
+	int changeStage() override;
+
+	int get_stage() override;
+};
+
+class EntryStage : public Stage {
+public:
+	Image font;
+	Image minifont;
+	Color bg;
+
+	EntryStage();
+
 	void render(Image* fb) override;
 	void update(double dt) override;
 
