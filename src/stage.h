@@ -41,6 +41,8 @@ public:
 
 	virtual void onKeyDown(SDL_KeyboardEvent event) {};
 	virtual void onKeyUp(SDL_KeyboardEvent event) {};
+
+	virtual int get_stage() { return EMPTY_STAGE; }
 };
 
 class PlayStage : public Stage 
@@ -49,6 +51,7 @@ public:
 	GameMap gameMap;
 	Vector2 camera_position;
 	Player player;
+	Image minifont;
 
 	PlayStage(const char* gameMap_filename, int collision_layer);
 
@@ -72,6 +75,8 @@ public:
 
 	void onKeyDown(SDL_KeyboardEvent event) override;
 	void onKeyUp(SDL_KeyboardEvent event) override;
+
+	int get_stage() override;
 };
 
 class ForwardStage : public PlayStage
@@ -92,6 +97,8 @@ public:
 
 	void onKeyDown(SDL_KeyboardEvent event) override;
 	void onKeyUp(SDL_KeyboardEvent event) override;
+
+	int get_stage() override;
 };
 
 class TempleStage : public ForwardStage {
@@ -101,6 +108,8 @@ public:
 	void onEnter(int previous_state = -1) override;
 	int onLeave() override;
 	int changeStage() override;
+
+	int get_stage() override;
 };
 
 class ReverseStage : public ForwardStage {
@@ -112,6 +121,8 @@ public:
 	void update(double dt) override;
 	int onLeave() override;
 	int changeStage() override;
+
+	int get_stage() override;
 };
 
 class TempleReverseStage : public ReverseStage {
@@ -122,6 +133,8 @@ public:
 	void onEnter(int previous_state = -1) override;
 	int onLeave() override;
 	int changeStage() override;
+
+	int get_stage() override;
 };
 
 class EndingStage : public Stage {
@@ -138,4 +151,6 @@ public:
 	void onEnter(int previous_state = -1) override;
 	int onLeave() override;
 	int changeStage() override;
+
+	int get_stage() override;
 };

@@ -16,6 +16,7 @@ PlayStage::PlayStage(const char* gameMap_filename, int collision_layer) : Stage(
 	this->player.offset_calculation = &Player::offset_calculation_forward;
 	//this->player.is_grounded = &Player::is_grounded_forward;
 	this->player.is_valid_target = &Player::is_valid_target_forward;
+	minifont.loadTGA("data/mini-font-white-4x6.tga"); //load bitmap-font image
 }
 
 ForwardStage::ForwardStage() : PlayStage("data/map_forward.json", COLLISIONS)
@@ -42,6 +43,18 @@ void ForwardStage::render(Image* fb)
 	// gameMap.render(fb, this->camera_position, COLLISIONS);
 	// gameMap.render(fb, this->camera_position, WALKABLE);
 	// gameMap.render(fb, this->camera_position, PROGRESS_LAYER);
+
+	if (get_stage() == STAGE_FORWARD) {
+		if (time < 1.5) {
+			fb->drawText("AAAHH", player.position.x - camera_position.x - CH_WIDTH*2, player.position.y - camera_position.y - CH_HEIGHT*2, minifont, 4, 6);
+		}
+		else if (time < 5.0) {
+			fb->drawText("I have to exit this creepy place...", player.position.x - camera_position.x - CH_WIDTH * 2, player.position.y - camera_position.y - CH_HEIGHT * 2, minifont, 4, 6);
+		}
+		else if (time < 10.0) {
+			fb->drawText("But I cannot climb up to the exit...", player.position.x - camera_position.x - CH_WIDTH * 2, player.position.y - camera_position.y - CH_HEIGHT * 2, minifont, 4, 6);
+		}
+	}
 
 	player.render(fb, this->camera_position);
 }
@@ -119,6 +132,11 @@ void ForwardStage::onKeyUp(SDL_KeyboardEvent event)
 {
 }
 
+int ForwardStage::get_stage()
+{
+	return STAGE_FORWARD;
+}
+
 void PlayStage::camera_clamp(Vector2 fb_size)
 {
 	this->camera_position = this->player.position - fb_size * 0.5; // also update camera position
@@ -144,6 +162,10 @@ void IntroStage::render(Image* fb)
 	gameMap.render(fb, this->camera_position, OBJECTS);
 
 	//gameMap.render(fb, this->camera_position, COLLISIONS);
+
+	fb->drawText("Ughh, water seems to be toxic", 2 * gameMap.tile_width - camera_position.x, 4 * gameMap.tile_height - camera_position.y, minifont, 4, 6);
+	fb->drawText("I'm soooo hungry...", 3 * gameMap.tile_width - camera_position.x, 5 * gameMap.tile_height - camera_position.y, minifont, 4, 6);
+	fb->drawText("I hope I could find some food...", 4 * gameMap.tile_width - camera_position.x, 6 * gameMap.tile_height - camera_position.y, minifont, 4, 6);
 
 	player.render(fb, this->camera_position);
 }
@@ -208,6 +230,11 @@ void IntroStage::onKeyUp(SDL_KeyboardEvent event)
 {
 }
 
+int IntroStage::get_stage()
+{
+	return STAGE_INTRO;
+}
+
 TempleStage::TempleStage() : ForwardStage("data/map_temple.json")
 {
 	//onEnter();
@@ -250,6 +277,11 @@ int TempleStage::changeStage()
 		return STAGE_FORWARD;
 	}
 	return EMPTY_STAGE;
+}
+
+int TempleStage::get_stage()
+{
+	return STAGE_TEMPLE;
 }
 
 ReverseStage::ReverseStage() : ForwardStage("data/map_reverse.json")
@@ -333,6 +365,11 @@ int ReverseStage::changeStage()
 	return EMPTY_STAGE;
 }
 
+int ReverseStage::get_stage()
+{
+	return STAGE_REVERSE;
+}
+
 TempleReverseStage::TempleReverseStage() : ReverseStage("data/map_temple_reverse.json")
 {
 	//onEnter();
@@ -376,6 +413,11 @@ int TempleReverseStage::changeStage()
 	return EMPTY_STAGE;
 }
 
+int TempleReverseStage::get_stage()
+{
+	return STAGE_TEMPLE_REVERSE;
+}
+
 EndingStage::EndingStage() : Stage()
 {
 	font.loadTGA("data/bitmap-font-white.tga"); //load bitmap-font image
@@ -387,6 +429,7 @@ void EndingStage::render(Image* fb)
 {
 	fb->fillBlend(bg);
 	fb->drawText("THE END", (fb->width*time-fb->width/2)*0.05, fb->height / 2, font);
+	fb->drawText("You have successfully exited the cave! :)", (fb->width/2 - fb->width * time * 0.1), 3 * fb->height / 4, minifont, 4, 6);
 }
 
 void EndingStage::update(double dt)
@@ -407,4 +450,9 @@ int EndingStage::onLeave()
 int EndingStage::changeStage()
 {
 	return EMPTY_STAGE;
+}
+
+int EndingStage::get_stage()
+{
+	return STAGE_ENDING;
 }
