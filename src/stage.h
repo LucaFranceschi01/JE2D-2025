@@ -10,7 +10,7 @@
 #include "math.h"
 #include "input.h"
 
-class Image;
+//class Image;
 
 enum {
 	EMPTY_STAGE=-1,
@@ -118,6 +118,22 @@ class TempleReverseStage : public ReverseStage {
 public:
 	TempleReverseStage();
 
+
+	void onEnter(int previous_state = -1) override;
+	int onLeave() override;
+	int changeStage() override;
+};
+
+class EndingStage : public Stage {
+public:
+	Image font;
+	Image minifont;
+	Color bg;
+
+	EndingStage();
+	
+	void render(Image* fb) override;
+	void update(double dt) override;
 
 	void onEnter(int previous_state = -1) override;
 	int onLeave() override;

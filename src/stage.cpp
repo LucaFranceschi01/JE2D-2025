@@ -6,11 +6,10 @@
 
 Stage::Stage()
 {
-	//this->current_stage = this;
 	this->time = 0;
 }
 
-PlayStage::PlayStage(const char* gameMap_filename, int collision_layer)
+PlayStage::PlayStage(const char* gameMap_filename, int collision_layer) : Stage()
 {
 	this->gameMap = GameMap(gameMap_filename, collision_layer);
 	this->player = Player("data/bicho.tga");
@@ -109,7 +108,7 @@ int ForwardStage::changeStage()
 	else if (cell_type == RELOAD_STAGE) {
 		return STAGE_FORWARD;
 	}
-	return -1;
+	return EMPTY_STAGE;
 }
 
 void ForwardStage::onKeyDown(SDL_KeyboardEvent event)
@@ -198,7 +197,7 @@ int IntroStage::changeStage()
 	if (cell_type == NEXT_STAGE) {
 		return STAGE_FORWARD;
 	}
-	return -1;
+	return EMPTY_STAGE;
 }
 
 void IntroStage::onKeyDown(SDL_KeyboardEvent event)
@@ -250,7 +249,7 @@ int TempleStage::changeStage()
 	else if (cell_type == PREVIOUS_STAGE) {
 		return STAGE_FORWARD;
 	}
-	return -1;
+	return EMPTY_STAGE;
 }
 
 ReverseStage::ReverseStage() : ForwardStage("data/map_reverse.json")
@@ -304,7 +303,7 @@ void ReverseStage::onEnter(int previous_state)
 	if (previous_state <= STAGE_TEMPLE_REVERSE) {
 		player.position = Vector2(38.0*gameMap.tile_width, 12.0*gameMap.tile_height);
 	}
-	else if (previous_state == STAGE_REVERSE) {
+	else if (previous_state >= STAGE_REVERSE) {
 		player.position = Vector2(37.0 * gameMap.tile_width, 12.0 * gameMap.tile_height);
 	}
 }
@@ -331,7 +330,7 @@ int ReverseStage::changeStage()
 	else if (cell_type == PREVIOUS_STAGE) {
 		return STAGE_TEMPLE_REVERSE;
 	}
-	return -1;
+	return EMPTY_STAGE;
 }
 
 TempleReverseStage::TempleReverseStage() : ReverseStage("data/map_temple_reverse.json")
@@ -374,5 +373,38 @@ int TempleReverseStage::changeStage()
 	else if (cell_type == PREVIOUS_STAGE) {
 		return STAGE_TEMPLE;
 	}
-	return -1;
+	return EMPTY_STAGE;
+}
+
+EndingStage::EndingStage() : Stage()
+{
+	font.loadTGA("data/bitmap-font-white.tga"); //load bitmap-font image
+	minifont.loadTGA("data/mini-font-white-4x6.tga"); //load bitmap-font image
+	bg = Color(128, 73, 104);
+}
+
+void EndingStage::render(Image* fb)
+{
+	fb->fillBlend(bg);
+	fb->drawText("THE END", (fb->width*time-fb->width/2)*0.05, fb->height / 2, font);
+}
+
+void EndingStage::update(double dt)
+{
+	time += dt;
+}
+
+void EndingStage::onEnter(int previous_state)
+{
+	time = 0.0;
+}
+
+int EndingStage::onLeave()
+{
+	return STAGE_ENDING;
+}
+
+int EndingStage::changeStage()
+{
+	return EMPTY_STAGE;
 }

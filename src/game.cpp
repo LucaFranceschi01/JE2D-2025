@@ -30,8 +30,6 @@ Game::Game(int window_width, int window_height, SDL_Window* window)
 	time = 0.0f;
 	elapsed_time = 0.0f;
 
-	font.loadTGA("data/bitmap-font-white.tga"); //load bitmap-font image
-	minifont.loadTGA("data/mini-font-white-4x6.tga"); //load bitmap-font image
 	//sprite.loadTGA("data/spritesheet.tga"); //example to load an sprite
 
 	// TODO: modificado en clase
@@ -47,6 +45,7 @@ Game::Game(int window_width, int window_height, SDL_Window* window)
 	stages[STAGE_TEMPLE] = new TempleStage();
 	stages[STAGE_TEMPLE_REVERSE] = new TempleReverseStage();
 	stages[STAGE_REVERSE] = new ReverseStage();
+	stages[STAGE_ENDING] = new EndingStage();
 
 	current_stage = stages[STAGE_INTRO];
 	//player.cameraClamp(fb_size, gameMap->map_size);
@@ -83,7 +82,7 @@ void Game::update(double seconds_elapsed)
 
 	int stage = current_stage->changeStage();
 
-	if (stage >= 0) {
+	if (stage > EMPTY_STAGE) {
 		changeStage(stage);
 	}
 
@@ -124,6 +123,7 @@ void Game::onKeyDown( SDL_KeyboardEvent event )
 		case SDLK_3: changeStage(STAGE_TEMPLE); break;
 		case SDLK_4: changeStage(STAGE_TEMPLE_REVERSE); break;
 		case SDLK_5: changeStage(STAGE_REVERSE); break;
+		case SDLK_6: changeStage(STAGE_ENDING); break;
 	}
 	current_stage->onKeyDown(event);
 }
