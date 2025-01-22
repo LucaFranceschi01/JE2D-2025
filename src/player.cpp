@@ -126,17 +126,47 @@ void Player::is_grounded_forward(GameMap* map)
 	}
 }
 
+void Player::is_grounded_reverse(GameMap* map)
+{
+	int cx = floor((position.x - offset.x) / map->tile_width);
+	int cy = floor((position.y - offset.y - CH_HEIGHT) / map->tile_height); // TRIAL AND ERROR, CH_HEIGHT SEEMS TO WORK FINE
+
+#ifdef RENDER_DEBUG
+	map->add_debug_cell(cx, cy);
+#endif
+
+	int cell_type = map->getCell(cx, cy, map->ground_layer).type;
+
+	grounded = false;
+	if (cell_type == FLOOR) {
+		grounded = true;
+	}
+}
+
 void Player::move(GameMap* map, Vector2 target)
 {
 	Vector2 velocity2 = target - position;
 
-	if (is_valid_target_forward(map, target)) {
+	/*if (is_valid_target_forward(map, target)) {
 		set_velocity(velocity2);
 	}
 	else if (is_valid_target_forward(map, Vector2(target.x, position.y))) {
 		set_velocity(Vector2(velocity2.x, 0.0));
 	}
 	else if (is_valid_target_forward(map, Vector2(position.x, target.y))) {
+		set_velocity(Vector2(0.0, velocity2.y));
+	}
+	else {
+		set_velocity(Vector2(0.0, 0.0));
+	}*/
+	
+	if ((*this.*is_valid_target)(map, target)) {
+		set_velocity(velocity2);
+	}
+	else if ((*this.*is_valid_target)(map, Vector2(target.x, position.y))) {
+		set_velocity(Vector2(velocity2.x, 0.0));
+	}
+	else if ((*this.*is_valid_target)(map, Vector2(position.x, target.y))) {
 		set_velocity(Vector2(0.0, velocity2.y));
 	}
 	else {
@@ -150,6 +180,25 @@ bool Player::is_valid_target_forward(GameMap* map, Vector2 target)
 	
 	int cx = floor((target.x - offset.x) / map->tile_width);
 	int cy = floor((target.y - offset.y) / map->tile_height);
+
+#ifdef RENDER_DEBUG
+	map->add_debug_cell(cx, cy);
+#endif
+
+	int cell_type = map->getCell(cx, cy, map->collision_layer).type;
+
+	if (cell_type == COLLISION) {
+		return false;
+	}
+	return true;
+}
+
+bool Player::is_valid_target_reverse(GameMap* map, Vector2 target)
+{
+	(*this.*offset_calculation)(target); // kind of a mess, mostly following https://stackoverflow.com/a/1486279
+
+	int cx = floor((target.x - offset.x) / map->tile_width);
+	int cy = floor((target.y - offset.y - CH_HEIGHT) / map->tile_height);
 
 #ifdef RENDER_DEBUG
 	map->add_debug_cell(cx, cy);
@@ -193,7 +242,7 @@ void Player::offset_calculation_reverse(Vector2 target)
 		offset.y = -0.2 * CH_HEIGHT;
 	}
 
-	if (velocity2.x >= 0.0) {
+	if (velocity2.x < 0.0) {
 		offset.x = 0.2 * CH_WIDTH;
 	}
 	else {

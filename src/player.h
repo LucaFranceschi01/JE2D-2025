@@ -37,6 +37,8 @@ public:
 	double time;
 
 	void (Player::*offset_calculation)(Vector2);
+	//void (Player::*is_grounded)(GameMap*);
+	bool (Player::* is_valid_target)(GameMap*, Vector2);
 
 	Player();
 
@@ -53,9 +55,9 @@ public:
 	void move(GameMap* map, Vector2 target);
 
 	void is_grounded_forward(GameMap* map);
-	//void is_grounded_reverse(GameMap* map);
+	void is_grounded_reverse(GameMap* map);
 	bool is_valid_target_forward(GameMap* map, Vector2 target);
-	//bool is_valid_target_reverse(GameMap* map, Vector2 target);
+	bool is_valid_target_reverse(GameMap* map, Vector2 target);
 
 	void offset_calculation_forward(Vector2 target);
 	void offset_calculation_reverse(Vector2 target);
