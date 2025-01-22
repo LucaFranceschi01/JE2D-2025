@@ -36,6 +36,8 @@ public:
 	Image sprite;
 	double time;
 
+	void (Player::*offset_calculation)(Vector2);
+
 	Player();
 
 	Player(const char* spritename);
@@ -48,8 +50,13 @@ public:
 	void render(Image* fb, Vector2 camera_position = { 0.0, 0.0 });
 	void update(double dt);
 	Vector2 handle_horizontal_input();
-
-	void is_grounded(GameMap* map);
 	void move(GameMap* map, Vector2 target);
-	bool is_valid_target(GameMap* map, Vector2 target);
+
+	void is_grounded_forward(GameMap* map);
+	//void is_grounded_reverse(GameMap* map);
+	bool is_valid_target_forward(GameMap* map, Vector2 target);
+	//bool is_valid_target_reverse(GameMap* map, Vector2 target);
+
+	void offset_calculation_forward(Vector2 target);
+	void offset_calculation_reverse(Vector2 target);
 };

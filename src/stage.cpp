@@ -14,6 +14,7 @@ PlayStage::PlayStage(const char* gameMap_filename, int collision_layer)
 {
 	this->gameMap = GameMap(gameMap_filename, collision_layer);
 	this->player = Player("data/bicho.tga");
+	this->player.offset_calculation = &Player::offset_calculation_forward;
 }
 
 ForwardStage::ForwardStage() : PlayStage("data/map_forward.json", COLLISIONS)
@@ -48,7 +49,7 @@ void ForwardStage::update(double dt)
 {
 	player.velocity.x *= 0.9; // friction if not pressing any button
 	
-	player.is_grounded(&gameMap); // first of all check state, grounded or not
+	player.is_grounded_forward(&gameMap); // first of all check state, grounded or not
 
 	Vector2 velocity = player.handle_horizontal_input(); // handle input, returns which is the desired new position
 
@@ -252,17 +253,21 @@ int TempleStage::changeStage()
 
 ReverseStage::ReverseStage() : ForwardStage("data/map_reverse.json")
 {
+	this->player = Player("data/bicho_reverse.tga"); // overwrite, not optimal but it is what it is
+	this->player.offset_calculation = &Player::offset_calculation_reverse;
 }
 
 ReverseStage::ReverseStage(const char* gameMap_filename) : ForwardStage(gameMap_filename)
 {
+	this->player = Player("data/bicho_reverse.tga"); // overwrite, not optimal but it is what it is
+	this->player.offset_calculation = &Player::offset_calculation_reverse;
 }
 
 void ReverseStage::update(double dt)
 {
 	player.velocity.x *= 0.9; // friction if not pressing any button
 
-	player.is_grounded(&gameMap); // first of all check state, grounded or not
+	player.is_grounded_forward(&gameMap); // first of all check state, grounded or not
 
 	Vector2 velocity = player.handle_horizontal_input(); // handle input, returns which is the desired new position
 

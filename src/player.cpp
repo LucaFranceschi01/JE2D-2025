@@ -18,6 +18,7 @@ Player::Player()
 	this->grounded = false;
 	this->time = 0.0;
 	//debug_font.loadTGA("data/mini-font-white-4x6.tga");
+	this->offset_calculation = nullptr;
 }
 
 Player::Player(const char* spritename)
@@ -34,6 +35,7 @@ Player::Player(const char* spritename)
 	this->grounded = false;
 	this->time = 0.0;
 	//debug_font.loadTGA("data/mini-font-white-4x6.tga");
+	this->offset_calculation = nullptr;
 }
 
 Player::Player(const char* spritename, Vector2 position, int movement_speed)
@@ -50,6 +52,7 @@ Player::Player(const char* spritename, Vector2 position, int movement_speed)
 	this->grounded = false;
 	this->time = 0.0;
 	//debug_font.loadTGA("data/mini-font-white-4x6.tga");
+	this->offset_calculation = nullptr;
 }
 
 void Player::set_velocity(Vector2 velocity)
@@ -106,7 +109,7 @@ Vector2 Player::handle_horizontal_input()
 	return velocity;
 }
 
-void Player::is_grounded(GameMap* map)
+void Player::is_grounded_forward(GameMap* map)
 {
 	int cx = floor((position.x - offset.x) / map->tile_width);
 	int cy = floor((position.y - offset.y) / map->tile_height);
@@ -127,13 +130,13 @@ void Player::move(GameMap* map, Vector2 target)
 {
 	Vector2 velocity2 = target - position;
 
-	if (is_valid_target(map, target)) {
+	if (is_valid_target_forward(map, target)) {
 		set_velocity(velocity2);
 	}
-	else if (is_valid_target(map, Vector2(target.x, position.y))) {
+	else if (is_valid_target_forward(map, Vector2(target.x, position.y))) {
 		set_velocity(Vector2(velocity2.x, 0.0));
 	}
-	else if (is_valid_target(map, Vector2(position.x, target.y))) {
+	else if (is_valid_target_forward(map, Vector2(position.x, target.y))) {
 		set_velocity(Vector2(0.0, velocity2.y));
 	}
 	else {
@@ -141,24 +144,10 @@ void Player::move(GameMap* map, Vector2 target)
 	}
 }
 
-bool Player::is_valid_target(GameMap* map, Vector2 target)
+bool Player::is_valid_target_forward(GameMap* map, Vector2 target)
 {
-	Vector2 velocity2 = target - position;
+	(*this.*offset_calculation)(target); // kind of a mess, mostly following https://stackoverflow.com/a/1486279
 	
-	if (velocity2.y < 0.0) {
-		offset.y = 0.3 * CH_HEIGHT;
-	}
-	else {
-		offset.y = -0.2 * CH_HEIGHT;
-	}
-
-	if (velocity2.x < 0.0) {
-		offset.x = 0.2 * CH_WIDTH;
-	}
-	else {
-		offset.x = -0.2 * CH_WIDTH;
-	}
-
 	int cx = floor((target.x - offset.x) / map->tile_width);
 	int cy = floor((target.y - offset.y) / map->tile_height);
 
@@ -172,4 +161,42 @@ bool Player::is_valid_target(GameMap* map, Vector2 target)
 		return false;
 	}
 	return true;
+}
+
+void Player::offset_calculation_forward(Vector2 target)
+{
+	Vector2 velocity2 = target - position;
+
+	if (velocity2.y < 0.0) {
+		offset.y = 0.3 * CH_HEIGHT;
+	}
+	else {
+		offset.y = -0.2 * CH_HEIGHT;
+	}
+
+	if (velocity2.x < 0.0) {
+		offset.x = 0.2 * CH_WIDTH;
+	}
+	else {
+		offset.x = -0.2 * CH_WIDTH;
+	}
+}
+
+void Player::offset_calculation_reverse(Vector2 target)
+{
+	Vector2 velocity2 = target - position;
+
+	if (velocity2.y >= 0.0) {
+		offset.y = 0.3 * CH_HEIGHT;
+	}
+	else {
+		offset.y = -0.2 * CH_HEIGHT;
+	}
+
+	if (velocity2.x >= 0.0) {
+		offset.x = 0.2 * CH_WIDTH;
+	}
+	else {
+		offset.x = -0.2 * CH_WIDTH;
+	}
 }
