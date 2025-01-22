@@ -18,7 +18,8 @@ enum {
 	STAGE_FORWARD,
 	STAGE_TEMPLE,
 	STAGE_TEMPLE_REVERSE,
-	STAGE_REVERSE
+	STAGE_REVERSE,
+	STAGE_ENDING
 };
 
 constexpr auto PREVIOUS_STAGE = 515;
@@ -96,6 +97,27 @@ public:
 class TempleStage : public ForwardStage {
 public:
 	TempleStage();
+
+	void onEnter(int previous_state = -1) override;
+	int onLeave() override;
+	int changeStage() override;
+};
+
+class ReverseStage : public ForwardStage {
+public:
+	ReverseStage();
+	ReverseStage(const char* gameMap_filename);
+
+	void onEnter(int previous_state = -1) override;
+	void update(double dt) override;
+	int onLeave() override;
+	int changeStage() override;
+};
+
+class TempleReverseStage : public ReverseStage {
+public:
+	TempleReverseStage();
+
 
 	void onEnter(int previous_state = -1) override;
 	int onLeave() override;

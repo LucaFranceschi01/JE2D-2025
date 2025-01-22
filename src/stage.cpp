@@ -76,14 +76,14 @@ void ForwardStage::update(double dt)
 
 void ForwardStage::onEnter(int previous_state)
 {
-	if (previous_state == STAGE_INTRO) {
+	if (previous_state <= STAGE_INTRO) {
 		player.position = Vector2(40.0, 20.0);
 	}
-	else if (previous_state == STAGE_TEMPLE) {
+	else if (previous_state >= STAGE_TEMPLE) {
 		player.position = Vector2((gameMap.width-1)*gameMap.tile_width-1, 13.0 * gameMap.tile_height);
 	}
 	else if (previous_state == STAGE_FORWARD) {
-		player.position = Vector2(3.0 * gameMap.tile_width, 17.0 * gameMap.tile_height);
+		player.position = Vector2(5.0 * gameMap.tile_width, 17.0 * gameMap.tile_height);
 	}
 }
 
@@ -217,8 +217,8 @@ void TempleStage::onEnter(int previous_state)
 	if (previous_state <= STAGE_FORWARD) {
 		player.position = Vector2(gameMap.tile_width + 1, 13.0*gameMap.tile_height);
 	}
-	else if (previous_state == STAGE_TEMPLE_REVERSE) {
-		player.position = Vector2((gameMap.width-1)*gameMap.tile_width, 9.0 * gameMap.tile_height);
+	else if (previous_state >= STAGE_TEMPLE_REVERSE) {
+		player.position = Vector2((gameMap.width-2)*gameMap.tile_width, 9.0 * gameMap.tile_height);
 	}
 	else if (previous_state == STAGE_TEMPLE) {
 		player.position = Vector2(gameMap.tile_width*3.0, 13.0 * gameMap.tile_height);
@@ -239,13 +239,129 @@ int TempleStage::changeStage()
 	int cell_type = gameMap.getCell(cx, cy, PROGRESS_LAYER).type;
 
 	if (cell_type == NEXT_STAGE) {
-		return STAGE_REVERSE;
+		return STAGE_TEMPLE_REVERSE;
 	}
 	else if (cell_type == RELOAD_STAGE) {
 		return STAGE_TEMPLE;
 	}
 	else if (cell_type == PREVIOUS_STAGE) {
 		return STAGE_FORWARD;
+	}
+	return -1;
+}
+
+ReverseStage::ReverseStage() : ForwardStage("data/map_reverse.json")
+{
+}
+
+ReverseStage::ReverseStage(const char* gameMap_filename) : ForwardStage(gameMap_filename)
+{
+}
+
+void ReverseStage::update(double dt)
+{
+	player.velocity.x *= 0.9; // friction if not pressing any button
+
+	player.is_grounded(&gameMap); // first of all check state, grounded or not
+
+	Vector2 velocity = player.handle_horizontal_input(); // handle input, returns which is the desired new position
+
+	// check if able to jump and add gravity
+	if (player.grounded) {
+		velocity.y = 0.0;
+		if (Input::isKeyPressed(SDL_SCANCODE_DOWN) || Input::isKeyPressed(SDL_SCANCODE_S)) {
+			velocity.y = +2.5;
+		}
+	}
+	else {
+		velocity.y -= 0.1;
+	}
+
+	Vector2 target = player.position + velocity;
+
+	player.move(&gameMap, target); // gameMap checks which is the closest valid position to the target
+
+	player.update(dt); // player is updated
+
+	gameMap.update(dt);
+
+	time += dt;
+}
+
+void ReverseStage::onEnter(int previous_state)
+{
+	if (previous_state <= STAGE_TEMPLE_REVERSE) {
+		player.position = Vector2(38.0*gameMap.tile_width, 12.0*gameMap.tile_height);
+	}
+	else if (previous_state == STAGE_REVERSE) {
+		player.position = Vector2(37.0 * gameMap.tile_width, 12.0 * gameMap.tile_height);
+	}
+}
+
+int ReverseStage::onLeave()
+{
+	player.velocity = Vector2(0.0, 0.0);
+	return STAGE_REVERSE;
+}
+
+int ReverseStage::changeStage()
+{
+	int cx = floor(player.position.x / gameMap.tile_width);
+	int cy = floor(player.position.y / gameMap.tile_height);
+
+	int cell_type = gameMap.getCell(cx, cy, PROGRESS_LAYER).type;
+
+	if (cell_type == NEXT_STAGE) {
+		return STAGE_ENDING;
+	}
+	else if (cell_type == RELOAD_STAGE) {
+		return STAGE_REVERSE;
+	}
+	else if (cell_type == PREVIOUS_STAGE) {
+		return STAGE_TEMPLE_REVERSE;
+	}
+	return -1;
+}
+
+TempleReverseStage::TempleReverseStage() : ReverseStage("data/map_temple_reverse.json")
+{
+	//onEnter();
+}
+
+void TempleReverseStage::onEnter(int previous_state)
+{
+	if (previous_state <= STAGE_TEMPLE) {
+		player.position = Vector2(29.0*gameMap.tile_width, 8.0 * gameMap.tile_height);
+	}
+	else if (previous_state >= STAGE_REVERSE) {
+		player.position = Vector2(gameMap.tile_width + 1, 12.0 * gameMap.tile_height);
+	}
+	else if (previous_state == STAGE_TEMPLE_REVERSE) {
+		player.position = Vector2(28.0 * gameMap.tile_width, 8.0 * gameMap.tile_height);
+	}
+}
+
+int TempleReverseStage::onLeave()
+{
+	player.velocity = Vector2(0.0, 0.0);
+	return STAGE_TEMPLE_REVERSE;
+}
+
+int TempleReverseStage::changeStage()
+{
+	int cx = floor(player.position.x / gameMap.tile_width);
+	int cy = floor(player.position.y / gameMap.tile_height);
+
+	int cell_type = gameMap.getCell(cx, cy, PROGRESS_LAYER).type;
+
+	if (cell_type == NEXT_STAGE) {
+		return STAGE_REVERSE;
+	}
+	else if (cell_type == RELOAD_STAGE) {
+		return STAGE_TEMPLE_REVERSE;
+	}
+	else if (cell_type == PREVIOUS_STAGE) {
+		return STAGE_TEMPLE;
 	}
 	return -1;
 }

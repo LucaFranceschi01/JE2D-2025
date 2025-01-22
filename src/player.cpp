@@ -81,7 +81,7 @@ void Player::update(double dt)
 	this->position += this->velocity * this->movement_speed * dt;
 	
 	velocity.x = clamp(velocity.x, -2.0, 2.0);
-	velocity.y = clamp(velocity.y, -2.5, 1.5);
+	velocity.y = clamp(velocity.y, -2.5, 2.5);
 	
 	this->time += dt;
 }

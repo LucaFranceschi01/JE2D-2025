@@ -45,6 +45,8 @@ Game::Game(int window_width, int window_height, SDL_Window* window)
 	stages[STAGE_INTRO] = new IntroStage();
 	stages[STAGE_FORWARD] = new ForwardStage();
 	stages[STAGE_TEMPLE] = new TempleStage();
+	stages[STAGE_TEMPLE_REVERSE] = new TempleReverseStage();
+	stages[STAGE_REVERSE] = new ReverseStage();
 
 	current_stage = stages[STAGE_INTRO];
 	//player.cameraClamp(fb_size, gameMap->map_size);
@@ -120,6 +122,8 @@ void Game::onKeyDown( SDL_KeyboardEvent event )
 		case SDLK_1: changeStage(STAGE_INTRO); break;
 		case SDLK_2: changeStage(STAGE_FORWARD); break;
 		case SDLK_3: changeStage(STAGE_TEMPLE); break;
+		case SDLK_4: changeStage(STAGE_TEMPLE_REVERSE); break;
+		case SDLK_5: changeStage(STAGE_REVERSE); break;
 	}
 	current_stage->onKeyDown(event);
 }
