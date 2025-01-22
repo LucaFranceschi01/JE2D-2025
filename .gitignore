@@ -42,3 +42,5 @@ tiled/
 *.log
 *.tlog
 *.recipe
+*.iobj
+*.ipdb
